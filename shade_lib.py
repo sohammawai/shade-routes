@@ -147,12 +147,25 @@ def shade_layer(buildings, trees, time_str):
         return None
     shadows = building_shadows(buildings, elevation, azimuth)
     return unary_union(list(shadows) + list(trees))
-
+def clean_canopy(trees, buildings):
+    """Remove canopy that sits on top of buildings
+    (the satellite model sometimes mistakes rooftops for trees)."""
+    roofs = unary_union(buildings.geometry)
+    cleaned = trees.difference(roofs)
+    return cleaned[~cleaned.is_empty]
 
 # ---------- Street scores ----------
-def edge_shade_fraction(edges, shade):
-    """For each street segment: the fraction of its length in shade (0 to 1)."""
+def edge_shade_fraction(edges, shade, half_width=0):
+    """For each street segment: the fraction in shade (0 to 1).
+    half_width > 0 scores a corridor that many metres either side of the
+    centre line, instead of just the line itself."""
     if shade is None:
         return pd.Series(1.0, index=edges.index)
-    shaded_length = edges.geometry.intersection(shade).length
-    return (shaded_length / edges.geometry.length).fillna(0).clip(0, 1)
+    if half_width > 0:
+        corridors = edges.geometry.buffer(half_width, cap_style="flat")
+        shaded = corridors.intersection(shade).area
+        total = corridors.area
+    else:
+        shaded = edges.geometry.intersection(shade).length
+        total = edges.geometry.length
+    return (shaded / total).fillna(0).clip(0, 1)
