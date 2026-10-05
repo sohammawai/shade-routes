@@ -1,9 +1,16 @@
 """Reusable functions for the Shade Routes project."""
+import os
 import osmnx as ox
 import pandas as pd
 import numpy as np
 import geopandas as gpd
 import pvlib
+import mercantile
+import rasterio
+from rasterio.windows import from_bounds
+from rasterio.warp import transform_bounds
+from rasterio.features import shapes
+from shapely.geometry import shape
 from shapely.affinity import translate
 from shapely.ops import unary_union
 
@@ -48,23 +55,69 @@ def load_buildings(crs):
     return b.to_crs(crs)
 
 
-# ---------- Trees ----------
+# ---------- Trees from OpenStreetMap ----------
 def load_trees(crs, canopy_radius=4.0):
     """Tree canopy shapes from OpenStreetMap.
-    Single trees and tree rows are turned into circles/strips of canopy_radius metres."""
+    Single trees and tree rows become circles/strips of canopy_radius metres."""
     tags = {"natural": ["tree", "tree_row", "wood"], "landuse": "forest"}
     try:
         t = ox.features_from_point(PLACE, tags=tags, dist=DIST)
     except Exception:
         return gpd.GeoSeries([], crs=crs)  # no trees mapped in this area
     t = t.to_crs(crs)
-    shapes = []
+    shapes_list = []
     for geom in t.geometry:
         if geom.geom_type in ("Point", "LineString", "MultiLineString"):
-            shapes.append(geom.buffer(canopy_radius, resolution=4))
+            shapes_list.append(geom.buffer(canopy_radius, resolution=4))
         else:
-            shapes.append(geom)
-    return gpd.GeoSeries(shapes, crs=crs)
+            shapes_list.append(geom)
+    return gpd.GeoSeries(shapes_list, crs=crs)
+
+
+# ---------- Trees from satellite canopy (Meta/WRI, on AWS Open Data) ----------
+CANOPY_URL = ("https://dataforgood-fb-data.s3.amazonaws.com/"
+              "forests/v1/alsgedi_global_v6_float/chm/{qk}.tif")
+CANOPY_CACHE = "data/canopy.gpkg"
+
+
+def load_canopy(crs, min_height=3.0):
+    """Tree canopy shapes from the Meta/WRI canopy height map.
+    Anything at least min_height metres tall counts as canopy.
+    Downloads only on the first run; after that it reads the saved file."""
+    if os.path.exists(CANOPY_CACHE):
+        return gpd.read_file(CANOPY_CACHE).geometry.to_crs(crs)
+
+    lat, lon = PLACE
+    # Which satellite tile covers CP (tiles are named by a "quadkey" at zoom 9)
+    qk = mercantile.quadkey(mercantile.tile(lon, lat, 9))
+    print(f"Reading canopy tile {qk} (first run only, can take a few minutes)...")
+
+    # A box around CP, the same size as DIST
+    dlat = DIST / 111_320
+    dlon = DIST / (111_320 * np.cos(np.radians(lat)))
+    west, south, east, north = lon - dlon, lat - dlat, lon + dlon, lat + dlat
+
+    with rasterio.open(CANOPY_URL.format(qk=qk)) as src:
+        bounds = transform_bounds("EPSG:4326", src.crs, west, south, east, north)
+        window = from_bounds(*bounds, transform=src.transform)
+        heights = src.read(1, window=window)          # only this small window
+        window_transform = src.window_transform(window)
+        source_crs = src.crs
+
+    heights = np.nan_to_num(heights)
+    is_tree = (heights >= min_height).astype("uint8")
+    print(f"Tree canopy covers {is_tree.mean():.0%} of the area")
+
+    # Turn clusters of tree pixels into shapes
+    polygons = [shape(geom) for geom, _ in
+                shapes(is_tree, mask=is_tree == 1, transform=window_transform)]
+    canopy = gpd.GeoDataFrame(geometry=polygons, crs=source_crs).to_crs(crs)
+    canopy["geometry"] = canopy.geometry.simplify(1.0)  # smooth pixel edges a little
+
+    os.makedirs("data", exist_ok=True)
+    canopy.to_file(CANOPY_CACHE, driver="GPKG")
+    print(f"Saved {len(canopy)} canopy shapes to {CANOPY_CACHE}")
+    return canopy.geometry
 
 
 # ---------- Sun and shadows ----------
@@ -79,11 +132,11 @@ def building_shadows(buildings, elevation, azimuth):
     length = np.minimum(buildings["height_m"] / np.tan(np.radians(elevation)), 300)
     dx = -np.sin(np.radians(azimuth)) * length
     dy = -np.cos(np.radians(azimuth)) * length
-    shapes = []
+    shadow_shapes = []
     for geom, x, y in zip(buildings.geometry, dx, dy):
         moved = translate(geom, xoff=x, yoff=y)
-        shapes.append(unary_union([geom, moved]).convex_hull)
-    return gpd.GeoSeries(shapes, crs=buildings.crs)
+        shadow_shapes.append(unary_union([geom, moved]).convex_hull)
+    return gpd.GeoSeries(shadow_shapes, crs=buildings.crs)
 
 
 def shade_layer(buildings, trees, time_str):
