@@ -1,0 +1,5 @@
+# What the backend needs on AWS Lambda (Phase 9)
+fastapi
+mangum
+networkx
+strands-agents

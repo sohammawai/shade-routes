@@ -4,3 +4,7 @@ __pycache__/
 *.pyc
 .env
 /data
+frontend/node_modules/
+frontend/dist/
+backend/build/
+backend/*.zip

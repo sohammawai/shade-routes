@@ -1,0 +1,3 @@
+# What the backend needs on your laptop: everything Lambda needs, plus a local web server
+-r requirements-lambda.txt
+uvicorn[standard]
