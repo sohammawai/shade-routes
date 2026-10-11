@@ -1,0 +1,2170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="shade-api" content="https://qu24o6l4c5bwgx4ermclonmwqq0quptd.lambda-url.ap-southeast-2.on.aws">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shade Routes Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script>try{var t=localStorage.getItem('sr-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<style>
+/* ================= tokens ================= */
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
+  --r-panel:10px; --r-card:6px; --r-ctl:5px; --r-tag:3px;
+  --label:#1d1d1f; --label2:rgba(60,60,67,.64); --label3:rgba(60,60,67,.3);
+  --fill:rgba(118,118,128,.12); --fill-strong:rgba(118,118,128,.22);
+  --sep:rgba(60,60,67,.14); --hairline:rgba(0,0,0,.08);
+  --material:rgba(252,252,253,.9); --material-border:rgba(0,0,0,.08);
+  --group:#FFFFFF; --seg-on:#FFFFFF; --callout:#FFFFFF; --menu:rgba(252,252,253,.98); --hover:rgba(118,118,128,.08);
+  --blue:#007AFF; --loc:#1A73E8; --green:#1E9E47; --green-ink:#17763A; --orange:#E8710A; --orange-ink:#A85400; --red:#E5372B;
+  --green-tint:rgba(30,158,71,.1); --orange-tint:rgba(232,113,10,.11); --blue-tint:rgba(0,122,255,.1);
+  --shadow:0 10px 30px rgba(0,0,0,.12),0 1px 3px rgba(0,0,0,.08);
+  --shadow-sm:0 1px 4px rgba(0,0,0,.16),0 0 0 .5px rgba(0,0,0,.06);
+  --land:#F4F3F0;
+  --bubble-in:#ECECEE; --bubble-in-ink:#1d1d1f;
+  --tabbar-h:58px; --sheet-h:150px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --label:#F2F2F4; --label2:rgba(235,235,245,.62); --label3:rgba(235,235,245,.28);
+    --fill:rgba(118,118,128,.24); --fill-strong:rgba(118,118,128,.38); --sep:rgba(84,84,88,.5); --hairline:rgba(255,255,255,.08);
+    --material:rgba(30,31,34,.92); --material-border:rgba(255,255,255,.1);
+    --group:rgba(46,47,51,.95); --seg-on:#5A5A5E; --callout:#2C2D30; --menu:rgba(40,40,42,.98); --hover:rgba(255,255,255,.05);
+    --blue:#0A84FF; --loc:#8AB4F8; --green:#34C759; --green-ink:#5BD67C; --orange:#FF9F0A; --orange-ink:#FFB340; --red:#FF5147;
+    --green-tint:rgba(52,199,89,.14); --orange-tint:rgba(255,159,10,.14); --blue-tint:rgba(10,132,255,.18);
+    --shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);
+    --shadow-sm:0 1px 4px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.07);
+    --land:#1D1F23; --bubble-in:#3A3A3C; --bubble-in-ink:#F5F5F7;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --label:#F2F2F4; --label2:rgba(235,235,245,.62); --label3:rgba(235,235,245,.28);
+  --fill:rgba(118,118,128,.24); --fill-strong:rgba(118,118,128,.38); --sep:rgba(84,84,88,.5); --hairline:rgba(255,255,255,.08);
+  --material:rgba(30,31,34,.92); --material-border:rgba(255,255,255,.1);
+  --group:rgba(46,47,51,.95); --seg-on:#5A5A5E; --callout:#2C2D30; --menu:rgba(40,40,42,.98); --hover:rgba(255,255,255,.05);
+  --blue:#0A84FF; --loc:#8AB4F8; --green:#34C759; --green-ink:#5BD67C; --orange:#FF9F0A; --orange-ink:#FFB340; --red:#FF5147;
+  --green-tint:rgba(52,199,89,.14); --orange-tint:rgba(255,159,10,.14); --blue-tint:rgba(10,132,255,.18);
+  --shadow:0 10px 30px rgba(0,0,0,.5),0 1px 3px rgba(0,0,0,.4);
+  --shadow-sm:0 1px 4px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.07);
+  --land:#1D1F23; --bubble-in:#3A3A3C; --bubble-in-ink:#F5F5F7;
+  color-scheme:dark;
+}
+
+/* ================= base ================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--land);color:var(--label);-webkit-font-smoothing:antialiased;overflow:hidden;
+  font-size:14px;letter-spacing:-.006em;line-height:1.3;font-feature-settings:"cv11","ss01"}
+button,input,select{font:inherit;color:inherit;letter-spacing:inherit}
+button{border:0;background:none;cursor:pointer}
+button:focus-visible,input:focus-visible,[role=button]:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+[hidden]{display:none!important}
+.num{font-variant-numeric:tabular-nums}
+svg.i{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.material{background:var(--material);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);
+  border:.5px solid var(--material-border);box-shadow:var(--shadow)}
+body,.material,.group,.chip,.menu,.msg{transition:background-color .3s,color .3s,border-color .3s}
+
+/* ================= map ================= */
+#map{position:fixed;inset:0;background:var(--land)}
+.maplibregl-canvas{outline:none}
+.maplibregl-ctrl-attrib{font-size:10.5px}
+.maplibregl-ctrl-attrib.maplibregl-compact{background:var(--material)!important;color:var(--label2)}
+.maplibregl-ctrl-attrib a{color:inherit!important}
+.dark-ui .maplibregl-ctrl-attrib-button{filter:invert(1)}
+.map-fail{position:fixed;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--label2);z-index:1}
+.map-fail b{display:block;color:var(--label);font-size:16px;margin-bottom:6px}
+
+/* your location */
+.me{width:22px;height:22px;pointer-events:none}
+.me .halo{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:var(--loc);opacity:.22;animation:halo 2.4s ease-out infinite}
+@keyframes halo{0%{transform:scale(.45);opacity:.35}100%{transform:scale(1.35);opacity:0}}
+.me .cone{position:absolute;left:50%;bottom:50%;width:60px;height:60px;margin-left:-30px;opacity:0;transition:opacity .3s;
+  background:linear-gradient(to top,color-mix(in srgb,var(--loc) 55%,transparent),transparent);clip-path:polygon(50% 100%,12% 0,88% 0)}
+.me.has-heading .cone{opacity:1}
+.me .dot{position:absolute;inset:2px;border-radius:50%;background:var(--loc);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+
+/* pins + route bubbles */
+.pin{display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3));padding-bottom:6px}
+.pin .head{width:28px;height:28px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--red);border:2px solid #fff;display:grid;place-items:center}
+.pin .head::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+.pin.start{padding:0}
+.pin.start .head{width:18px;height:18px;border-radius:50%;transform:none;background:#fff;border:0;box-shadow:0 0 0 .5px rgba(0,0,0,.3)}
+.pin.start .head::after{width:7px;height:7px;background:#1d1d1f}
+.callout{padding:5px 9px 6px;border-radius:var(--r-ctl);background:var(--callout);color:var(--label);box-shadow:var(--shadow-sm);
+  cursor:pointer;white-space:nowrap;transition:background-color .2s,color .2s;margin-bottom:8px}
+.callout::after{content:"";position:absolute;left:50%;bottom:-4px;width:8px;height:8px;margin-left:-4px;background:inherit;transform:rotate(45deg);border-radius:1px}
+.callout b{display:block;font-size:13px;font-weight:700;line-height:1.15}
+.callout span{font-size:10.5px;font-weight:500;color:var(--label2)}
+.callout.on.k-coolest{background:var(--green);color:#fff} .callout.on.k-fastest{background:var(--orange);color:#fff} .callout.on.k-alt{background:var(--blue);color:#fff}
+.callout.on span{color:rgba(255,255,255,.88)}
+
+/* ================= search ================= */
+.search{position:fixed;top:12px;left:12px;width:380px;border-radius:8px;z-index:8}
+.search-row{display:flex;align-items:center;gap:6px;height:46px;padding:0 6px 0 10px}
+.app-icon{width:28px;height:28px;border-radius:7px;background:linear-gradient(180deg,#5BCF67,#22994A);display:grid;place-items:center;color:#fff;font-size:15px;flex:none;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.15),0 1px 2px rgba(0,0,0,.15)}
+.search input{flex:1;min-width:0;height:100%;border:0;background:none;outline:none;font-size:15px;padding:0 4px}
+.search input::placeholder{color:var(--label2)}
+.search input::-webkit-search-cancel-button{display:none}
+.search.picking{box-shadow:0 0 0 2px var(--blue),var(--shadow)}
+.vline{width:.5px;height:22px;background:var(--sep)}
+.icon-btn{width:32px;height:32px;border-radius:var(--r-ctl);display:grid;place-items:center;color:var(--label2);font-size:17px;flex:none;transition:background-color .15s,color .15s}
+.icon-btn:hover,.icon-btn[aria-expanded="true"]{background:var(--fill);color:var(--label)}
+.results{border-top:.5px solid var(--sep);padding:4px;max-height:min(420px,60vh);overflow-y:auto}
+.res{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border-radius:var(--r-ctl);text-align:left}
+.res:hover,.res.act{background:var(--hover)}
+.res .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .s{font-size:12px;color:var(--label2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.res .d{font-size:11.5px;color:var(--label2)}
+.res-note{padding:8px 10px;font-size:12px;color:var(--label2)}
+.pico{width:24px;height:24px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:14px;flex:none}
+
+/* appearance menu */
+.menu{position:absolute;top:44px;right:4px;width:196px;padding:5px;border-radius:8px;background:var(--menu);border:.5px solid var(--material-border);
+  box-shadow:0 12px 32px rgba(0,0,0,.2),0 2px 6px rgba(0,0,0,.1);z-index:30;transform-origin:top right;animation:menuIn .14s ease-out}
+@keyframes menuIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.menu-h{font-size:11px;font-weight:600;color:var(--label2);padding:5px 9px 4px}
+.menu button{display:flex;align-items:center;gap:9px;width:100%;height:28px;padding:0 9px;border-radius:4px;font-size:13px;text-align:left}
+.menu button svg:first-child{font-size:15px;color:var(--label2)}
+.menu .ck{margin-left:auto;font-size:14px;color:var(--blue);opacity:0}
+.menu button[aria-checked="true"] .ck{opacity:1}
+.menu button:hover,.menu button:focus-visible{background:var(--blue);color:#fff;outline:none}
+.menu button:hover svg,.menu button:focus-visible svg{color:#fff!important}
+.menu hr{border:0;border-top:.5px solid var(--sep);margin:5px 4px}
+.menu .kbd{margin-left:auto;font-size:11px;color:var(--label3)}
+
+/* ================= chips ================= */
+.chips{position:fixed;top:12px;left:404px;right:60px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;z-index:6;padding:1px 2px 6px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:flex;align-items:center;gap:6px;height:34px;padding:0 12px 0 10px;border-radius:var(--r-card);background:var(--group);
+  box-shadow:var(--shadow-sm);font-size:13px;font-weight:500;white-space:nowrap}
+.chip svg{font-size:15px;color:var(--c,var(--label2))}
+.chip:hover{background:color-mix(in srgb,var(--group) 92%,var(--label))}
+.chip[aria-pressed="true"]{background:var(--c);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.chip[aria-pressed="true"] svg{color:#fff}
+
+/* ================= panel / sheet ================= */
+.panel{position:fixed;top:66px;left:12px;bottom:12px;width:380px;border-radius:var(--r-panel);display:flex;flex-direction:column;z-index:5;overflow:hidden}
+.handle{display:none}
+.panel-head{padding:10px 12px 0}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--fill);border-radius:var(--r-ctl);padding:2px}
+.seg button{height:26px;border-radius:4px;font-size:12.5px;font-weight:500;color:var(--label2);transition:background-color .2s,box-shadow .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--seg-on);color:var(--label);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.14),0 0 0 .5px rgba(0,0,0,.05)}
+.panel-body{flex:1;min-height:0;overflow-y:auto;padding:10px 12px 16px;scrollbar-width:thin;overscroll-behavior:contain}
+.sec{display:flex;justify-content:space-between;align-items:baseline;padding:14px 2px 6px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--label2)}
+.sec .meta{text-transform:none;letter-spacing:0;font-weight:500;font-size:12px}
+.sec .link{text-transform:none;letter-spacing:0;font-weight:600;font-size:12px;color:var(--blue)}
+.group{background:var(--group);border-radius:var(--r-card);overflow:hidden;box-shadow:0 0 0 .5px var(--hairline)}
+.group + .group{margin-top:8px}
+
+.hero{display:flex;align-items:flex-start;gap:10px;padding:2px 2px 4px}
+.hero .tx{flex:1;min-width:0}
+.hero h2{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.hero p{font-size:12.5px;color:var(--label2);margin-top:3px;display:flex;align-items:center;gap:6px}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--label3);flex:none}
+.sdot.on{background:var(--green)}
+.wx{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding:6px 9px;border-radius:var(--r-card);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);min-width:74px}
+.wx-t{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:700}
+.wx-t svg{font-size:16px;color:#F5A623}
+.wx-m{font-size:10.5px;color:var(--label2);display:flex;gap:6px;white-space:nowrap}
+.wx-m i{font-style:normal;font-weight:600}
+
+.item{display:flex;align-items:center;gap:11px;width:100%;padding:9px 12px 9px 11px;text-align:left}
+.item + .item{border-top:.5px solid var(--sep)}
+button.item:hover{background:var(--hover)}
+.item .tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.item .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .s{font-size:12px;color:var(--label2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .r{font-size:12px;color:var(--label2);text-align:right;white-space:nowrap;line-height:1.35}
+.item .chev{color:var(--label3);font-size:13px}
+.empty-note{padding:12px;font-size:12.5px;color:var(--label2)}
+.skel{height:42px;margin:8px 12px;border-radius:4px;background:linear-gradient(90deg,var(--fill) 0%,var(--fill-strong) 50%,var(--fill) 100%);background-size:200% 100%;animation:sk 1.2s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+.back{display:inline-flex;align-items:center;gap:4px;color:var(--blue);font-weight:500;font-size:13px;padding:4px 2px;margin-bottom:6px}
+.place-head{display:flex;gap:12px;align-items:flex-start}
+.place-head .pico{width:40px;height:40px;border-radius:8px;font-size:22px}
+.place-head h2{font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.place-head p{font-size:13px;color:var(--label2);margin-top:2px}
+.facts{display:flex;gap:8px;margin-top:12px}
+.fact{flex:1;background:var(--group);border-radius:var(--r-card);box-shadow:0 0 0 .5px var(--hairline);padding:9px 10px}
+.fact b{display:block;font-size:15px;font-weight:700}
+.fact span{font-size:11px;color:var(--label2)}
+.actions{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;height:36px;border-radius:var(--r-ctl);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;transition:background-color .15s}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--green);color:#fff;box-shadow:none}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.danger{color:var(--red)} .btn.accent{color:var(--blue)}
+.btn svg{font-size:15px}
+.btn:active,.icon-btn:active,.route:active,button.item:active,.chip:active{transform:scale(.985)}
+.note{font-size:12px;color:var(--label2);padding:10px 2px 0;line-height:1.45}
+
+/* trip */
+.waypoints{position:relative}
+.wp{display:flex;align-items:center;gap:12px;padding-left:13px;height:42px;width:100%;text-align:left}
+.wp-txt{flex:1;height:100%;display:flex;align-items:center;gap:6px;padding-right:50px;min-width:0}
+.wp + .wp .wp-txt{border-top:.5px solid var(--sep)}
+.wp-k{color:var(--label2);width:38px;flex:none;font-size:13px}
+.wp-v{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wp-v.ph{color:var(--blue)}
+.wp-ico{width:16px;height:16px;border-radius:50%;flex:none;display:grid;place-items:center}
+.wp-ico.start{background:#fff;box-shadow:0 0 0 .5px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.2)}
+.wp-ico.start::after{content:"";width:6px;height:6px;border-radius:50%;background:#1d1d1f}
+.wp-ico.me{background:var(--loc);box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.3);width:12px;height:12px;margin:0 2px}
+.wp-ico.end{background:var(--red)} .wp-ico.end::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+.wp-dots{position:absolute;left:20px;top:31px;width:2px;height:22px;background:radial-gradient(circle,var(--label3) .9px,transparent 1.3px) 0 0/2px 5px}
+.swap{position:absolute;right:9px;top:50%;margin-top:-14px;width:28px;height:28px;border-radius:var(--r-ctl);background:var(--fill);display:grid;place-items:center;color:var(--label2);font-size:15px}
+.swap:hover{background:var(--fill-strong);color:var(--label)}
+.row{display:flex;align-items:center;gap:11px;padding-left:11px;min-height:42px}
+.sq{width:24px;height:24px;border-radius:5px;display:grid;place-items:center;color:#fff;flex:none;font-size:14px}
+.slider-col{flex:1;display:flex;flex-direction:column;padding:9px 13px 8px 0}
+.slider-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--label2)}
+.slider-top b{color:var(--label);font-weight:600;font-size:14px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;--p:80%;cursor:pointer;display:block}
+input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:1.5px;background:linear-gradient(to right,var(--blue) var(--p),var(--fill-strong) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:22px;margin-top:-9.5px;border-radius:4px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25),0 0 0 .5px rgba(0,0,0,.12)}
+input[type=range]::-moz-range-track{height:3px;border-radius:1.5px;background:var(--fill-strong)}
+input[type=range]::-moz-range-progress{height:3px;border-radius:1.5px;background:var(--blue)}
+input[type=range]::-moz-range-thumb{width:14px;height:22px;border:0;border-radius:4px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25),0 0 0 .5px rgba(0,0,0,.12)}
+.ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--label2);margin-top:-3px}
+
+.route{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px 11px 15px;text-align:left;transition:background-color .2s}
+.route + .route{border-top:.5px solid var(--sep)}
+.route:hover{background:var(--hover)}
+button.item.on{background:var(--hover);box-shadow:inset 3px 0 0 #0A84FF}
+.route.on.k-coolest{background:var(--green-tint)} .route.on.k-fastest{background:var(--orange-tint)} .route.on.k-alt{background:var(--blue-tint)}
+.key{position:absolute;left:0;top:0;bottom:0;width:3px;opacity:.35;transition:opacity .2s}
+.route.on .key{opacity:1}
+.r-body{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.r-top{display:flex;align-items:center;gap:8px}
+.r-time{font-size:20px;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.r-time small{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--label2)}
+.tag-s{font-size:9.5px;font-weight:700;padding:2px 5px 1px;border-radius:var(--r-tag);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+.tag-s.k-coolest{background:var(--green-tint);color:var(--green-ink)}
+.tag-s.k-fastest{background:var(--orange-tint);color:var(--orange-ink)}
+.tag-s.k-alt{background:var(--blue-tint);color:var(--blue)}
+.r-meta{color:var(--label2);font-size:12.5px}
+.r-meta b{font-weight:600;color:var(--label)}
+.meter{height:3px;border-radius:1px;background:var(--fill-strong);overflow:hidden;margin-top:7px}
+.meter i{display:block;height:100%;transition:width .45s cubic-bezier(.2,.8,.2,1)}
+.tick{color:var(--blue);font-size:17px;opacity:0;transition:opacity .2s}
+.tick svg{stroke-width:2.6}
+.route.on .tick{opacity:1}
+.insight{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--r-card);background:var(--green-tint);color:var(--green-ink);margin-top:8px;font-size:13px;line-height:1.4;box-shadow:inset 3px 0 0 var(--green)}
+.insight.muted{background:var(--fill);color:var(--label2);box-shadow:inset 3px 0 0 var(--label3)}
+.insight svg{font-size:16px;margin-top:1px}
+.insight b{font-weight:600}
+.insight button{color:var(--blue);font-weight:600}
+.empty{text-align:center;padding:22px 14px 14px}
+.empty .big{width:44px;height:44px;border-radius:var(--r-card);background:var(--blue-tint);color:var(--blue);display:grid;place-items:center;margin:0 auto 12px;font-size:20px}
+.empty h3{font-size:15px;font-weight:600;margin-bottom:4px}
+.empty p{color:var(--label2);font-size:13px;margin-bottom:14px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--group);border-radius:var(--r-card);padding:11px 12px;box-shadow:0 0 0 .5px var(--hairline)}
+.stat b{display:block;font-size:20px;font-weight:700;letter-spacing:-.03em}
+.stat span{font-size:11.5px;color:var(--label2);line-height:1.3;display:block;margin-top:2px}
+.rank{width:22px;height:22px;border-radius:4px;background:var(--fill);display:grid;place-items:center;font-size:11.5px;font-weight:700;flex:none}
+.item:nth-child(-n+3) .rank{background:var(--orange-tint);color:var(--orange-ink)}
+.p-score{text-align:right;font-weight:700;font-size:15px}
+.p-score small{display:block;font-size:9.5px;font-weight:600;color:var(--label2);letter-spacing:.06em;text-transform:uppercase}
+.attr{font-size:10.5px;color:var(--label3);padding:14px 2px 0;line-height:1.4}
+
+.tabbar{display:none}
+
+/* ================= map buttons ================= */
+.ctrls{position:fixed;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;z-index:4}
+.ctrl{border-radius:var(--r-card);overflow:hidden;display:flex;flex-direction:column}
+.ctrl button{width:38px;height:38px;display:grid;place-items:center;color:var(--label2);font-size:17px;transition:background-color .15s,color .15s}
+.ctrl button + button{border-top:.5px solid var(--sep)}
+.ctrl button:hover{background:var(--fill);color:var(--label)}
+.ctrl button[aria-pressed="true"]{color:var(--blue)}
+.fabs{position:fixed;right:12px;bottom:34px;display:flex;flex-direction:column;gap:8px;align-items:flex-end;z-index:4;transition:bottom .25s,opacity .2s}
+.fab{width:44px;height:44px;border-radius:8px;display:grid;place-items:center;font-size:20px;color:var(--label2)}
+/* Google-style "my location" button: solid card, crosshair icon */
+.fab.loc,.gbtn{background:var(--group);box-shadow:0 1px 4px rgba(0,0,0,.3);border:0}
+.fab.loc{width:40px;height:40px;border-radius:6px;font-size:22px;color:#5F6368;transition:color .2s,background-color .15s}
+.dark-ui .fab.loc{color:#BDC1C6}
+.fab.loc:hover{background:color-mix(in srgb,var(--group) 92%,var(--label))}
+.fab.loc .loc-dot{fill:none;stroke:none}
+.fab.loc[data-state="on"],.fab.loc[data-state="follow"]{color:var(--loc)}
+.fab.loc[data-state="on"] .loc-dot{stroke:currentColor}
+.fab.loc[data-state="follow"] .loc-dot{fill:currentColor;stroke:currentColor}
+.gbtn button{width:40px;height:40px}
+.fab.loc[data-state="searching"] svg{animation:blinkf 1s infinite}
+@keyframes blinkf{50%{opacity:.3}}
+.fab.dir{background:var(--green);color:#fff;border:0;display:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+.legend{position:fixed;bottom:12px;left:404px;transform:translateY(8px);opacity:0;pointer-events:none;border-radius:var(--r-card);padding:7px 12px;
+  display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--label2);transition:opacity .25s,transform .25s;z-index:3;white-space:nowrap}
+.legend.show{opacity:1;transform:none}
+.legend b{color:var(--label);font-weight:600}
+.legend .ramp{width:100px;height:5px;border-radius:1px;background:linear-gradient(to right,#E8710A,#E6C229,#1E9E47)}
+.tag{position:fixed;top:56px;left:404px;padding:4px 8px;border-radius:var(--r-ctl);font-size:11px;font-weight:500;color:var(--label2);z-index:3;white-space:nowrap}
+.toast{position:fixed;left:calc(50% + 196px);bottom:24px;transform:translate(-50%,10px);opacity:0;pointer-events:none;z-index:40;
+  background:#1d1d1f;color:#fff;padding:9px 14px;border-radius:var(--r-card);font-size:13px;box-shadow:var(--shadow);transition:opacity .25s,transform .25s;max-width:min(420px,calc(100vw - 32px))}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ================= chat ================= */
+.chat{position:fixed;right:12px;bottom:12px;width:360px;height:min(540px,calc(100vh - 24px));border-radius:var(--r-panel);display:flex;flex-direction:column;z-index:12;overflow:hidden;
+  transform-origin:bottom right;animation:pop .22s cubic-bezier(.2,.9,.25,1)}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(6px)}to{opacity:1;transform:none}}
+.chat header{display:flex;align-items:center;gap:10px;padding:12px 10px 11px 14px;border-bottom:.5px solid var(--sep)}
+.chat-title{flex:1;min-width:0}
+.chat h3{font-size:14px;font-weight:600}
+.chat header p{font-size:11.5px;color:var(--label2)}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:6px}
+.msg{max-width:82%;padding:7px 11px;border-radius:10px;font-size:14px;line-height:1.35;animation:pop .2s ease-out}
+.msg{white-space:pre-wrap}
+.msg.in{align-self:flex-start;background:var(--bubble-in);color:var(--bubble-in-ink);border-bottom-left-radius:3px}
+.msg.out{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:3px}
+.typing{display:flex;gap:4px;padding:11px 13px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--label3);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.35}40%{opacity:1}}
+.qchips{display:flex;gap:6px;padding:0 12px 8px;overflow-x:auto;scrollbar-width:none}
+.qchips button{flex:none;height:28px;padding:0 10px;border-radius:var(--r-ctl);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);color:var(--blue);font-size:12.5px;font-weight:500}
+.composer{display:flex;gap:8px;align-items:center;padding:4px 12px 12px}
+.composer input{flex:1;height:34px;border-radius:var(--r-ctl);border:.5px solid var(--sep);background:var(--group);padding:0 11px;outline:none;font-size:14px}
+.composer input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
+.send{width:34px;height:34px;border-radius:var(--r-ctl);background:var(--blue);color:#fff;display:grid;place-items:center;font-size:15px}
+.send:disabled{background:var(--fill-strong);cursor:default}
+
+/* ================= time: Now / Plan ahead ================= */
+.when{display:flex;align-items:center;gap:8px;margin:2px 0 10px}
+.when-btn{flex:1;min-width:0;display:flex;align-items:center;gap:8px;height:36px;padding:0 10px;border-radius:var(--r-ctl);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);text-align:left;font-size:13px}
+.when-btn:hover{background:var(--hover)}
+.when-btn .wt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.when-btn b{font-weight:600}
+.when-btn .chev{color:var(--label3);font-size:13px;transition:transform .2s}
+.when-btn[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.when-btn .cal{color:var(--blue);font-size:15px;display:grid}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none;animation:livep 2s infinite}
+@keyframes livep{0%{box-shadow:0 0 0 0 rgba(30,158,71,.45)}70%{box-shadow:0 0 0 6px rgba(30,158,71,0)}100%{box-shadow:0 0 0 0 rgba(30,158,71,0)}}
+.sun-pill{display:flex;align-items:center;gap:5px;height:36px;padding:0 10px;border-radius:var(--r-ctl);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);font-size:12px;color:var(--label2);white-space:nowrap}
+.sun-pill svg{font-size:15px;color:#F5A623}
+.sun-pill.night svg{color:#8E9BC7}
+.when-note{flex:1;display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:var(--r-ctl);background:var(--group);box-shadow:0 0 0 .5px var(--hairline);font-size:12px;color:var(--label2);line-height:1.35}
+.when-note svg{font-size:15px;color:#F5A623;flex:none}
+.when-panel{background:var(--group);border-radius:var(--r-card);box-shadow:0 0 0 .5px var(--hairline);padding:10px 12px 12px;margin:-4px 0 10px}
+.seg2{display:grid;grid-template-columns:1fr 1fr;background:var(--fill);border-radius:var(--r-ctl);padding:2px;margin-bottom:10px}
+.seg2 button{height:26px;border-radius:4px;font-size:12.5px;font-weight:500;color:var(--label2)}
+.seg2 button[aria-pressed="true"]{background:var(--seg-on);color:var(--label);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.wp-date input{width:100%;height:32px;border-radius:var(--r-ctl);border:.5px solid var(--sep);background:var(--group);padding:0 8px;font-size:13px;color:var(--label)}
+.tl-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11.5px;color:var(--label2);margin-top:8px}
+.tl-top b{font-size:15px;color:var(--label);font-weight:700}
+input.tl::-webkit-slider-runnable-track{background:var(--track)!important;height:6px;border-radius:1px}
+input.tl::-webkit-slider-thumb{margin-top:-8px}
+input.tl::-moz-range-track{background:var(--track);height:6px}
+input.tl::-moz-range-progress{background:transparent}
+.tl-ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--label2);margin-top:-3px}
+.qc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.qc button{height:28px;padding:0 10px;border-radius:var(--r-ctl);background:var(--fill);font-size:12.5px;font-weight:500;color:var(--blue)}
+.qc button:hover{background:var(--blue-tint)}
+.advice{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--label2);padding:6px 2px 2px;line-height:1.4}
+.advice svg{font-size:14px;margin-top:1px;flex:none;color:#F5A623}
+.night-card{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:var(--r-card);background:var(--fill);margin-top:8px;font-size:13px;color:var(--label2)}
+.night-card svg{color:#8E9BC7;flex:none}
+.night-card button,.insight button[data-jump]{margin-left:auto;color:var(--blue);font-weight:600;white-space:nowrap}
+/* sun direction marker: sun on one side, shadows on the other */
+.sunmk{width:150px;height:150px;pointer-events:none}
+.sunmk .ray{position:absolute;left:50%;top:14px;width:2px;height:61px;margin-left:-1px;background:linear-gradient(to top,rgba(245,166,35,0),#F5A623)}
+.sunmk .disc{position:absolute;left:50%;top:0;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:#F7B733;box-shadow:0 0 0 3px rgba(247,183,51,.3),0 0 10px rgba(247,183,51,.8)}
+.sunmk .shadow{position:absolute;left:50%;top:75px;width:2px;height:30px;margin-left:-1px;background:repeating-linear-gradient(to bottom,rgba(60,64,67,.6) 0 4px,transparent 4px 7px)}
+.dark-ui .sunmk .shadow{background:repeating-linear-gradient(to bottom,rgba(232,234,237,.6) 0 4px,transparent 4px 7px)}
+/* walking */
+.walk{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-card);background:var(--green);color:#fff;margin-bottom:10px}
+.walk > svg{font-size:20px}
+.walk .tx{flex:1;min-width:0} .walk b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .walk span{font-size:12px;opacity:.92}
+.walk button{height:30px;padding:0 12px;border-radius:var(--r-ctl);background:rgba(255,255,255,.22);color:#fff;font-weight:600}
+.reroute{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:var(--r-card);background:var(--blue-tint);margin-bottom:10px;font-size:13px}
+.reroute svg{color:var(--green);flex:none}
+.reroute button{margin-left:auto;height:30px;padding:0 12px;border-radius:var(--r-ctl);background:var(--blue);color:#fff;font-weight:600}
+
+/* ================= phone ================= */
+@media (max-width:760px){
+  .search{left:10px;right:10px;width:auto;top:calc(10px + env(safe-area-inset-top))}
+  .chips{top:calc(64px + env(safe-area-inset-top));left:0;right:0;padding:1px 10px 6px}
+  .ctrls{top:calc(110px + env(safe-area-inset-top));right:10px}
+  .panel{top:auto;left:0;right:0;bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom));width:auto;height:var(--sheet-h);
+    border-radius:var(--r-panel) var(--r-panel) 0 0;border-bottom:0;transition:height .3s cubic-bezier(.2,.8,.2,1),background-color .3s}
+  .panel.dragging{transition:none}
+  .handle{display:block;height:20px;flex:none;position:relative;cursor:grab;touch-action:none}
+  .handle::after{content:"";position:absolute;left:50%;top:7px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--label3)}
+  .panel-head{display:none}
+  .panel-body{padding-top:2px}
+  .tabbar{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;left:0;right:0;bottom:0;height:calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding:6px 10px env(safe-area-inset-bottom);background:var(--material);border-top:.5px solid var(--sep);z-index:7;
+    -webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px)}
+  .tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--label2)}
+  .tabbar button span{display:grid;place-items:center;width:52px;height:26px;border-radius:var(--r-card);font-size:18px;transition:background-color .2s}
+  .tabbar button[aria-pressed="true"]{color:var(--label);font-weight:600}
+  .tabbar button[aria-pressed="true"] span{background:var(--green-tint);color:var(--green-ink)}
+  .fabs{bottom:calc(var(--sheet-h) + var(--tabbar-h) + env(safe-area-inset-bottom) + 12px);right:10px}
+  .fabs .zoom{display:none}
+  .fab.dir{display:grid}
+  body.sheet-full .fabs{opacity:0;pointer-events:none}
+  .maplibregl-ctrl-bottom-right{bottom:calc(var(--sheet-h) + var(--tabbar-h) + env(safe-area-inset-bottom));right:auto;left:0}
+  .legend{top:calc(110px + env(safe-area-inset-top));left:10px;bottom:auto;transform:translateY(-6px)}
+  .legend.show{transform:none}
+  .tag{display:none}
+  .toast{left:50%;bottom:calc(var(--sheet-h) + var(--tabbar-h) + 20px)}
+  .chat{inset:8px;width:auto;height:auto}
+}
+/* ================= motion: smooth, Mac-like ================= */
+:root{--ease-out:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.34,1.45,.64,1);--ease-sheet:cubic-bezier(.32,.72,0,1)}
+.seg,.seg2{position:relative;isolation:isolate}
+.seg-thumb{position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/3);border-radius:4px;background:var(--seg-on);pointer-events:none;z-index:-1;
+  box-shadow:0 1px 3px rgba(0,0,0,.14),0 0 0 .5px rgba(0,0,0,.05);transform:translateX(calc(100% * var(--i, 0)));transition:transform .4s var(--ease-out),background-color .3s}
+.seg2 .seg-thumb{width:calc((100% - 4px)/2)}
+.seg button,.seg2 button{position:relative;transition:color .25s}
+.seg button[aria-pressed="true"],.seg2 button[aria-pressed="true"]{background:transparent;box-shadow:none}
+.tab-ind{display:none}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pushIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes popBack{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:none}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes dropOut{to{opacity:0;transform:translateY(-6px) scale(.985)}}
+@keyframes popOut{to{opacity:0;transform:scale(.96) translateY(6px)}}
+@keyframes mkIn{from{opacity:0;scale:.55;translate:0 -10px}to{opacity:1;scale:1;translate:0 0}}
+.anim-in > *{animation:rise .46s var(--ease-out) both}
+.anim-in > :nth-child(2){animation-delay:.035s} .anim-in > :nth-child(3){animation-delay:.07s} .anim-in > :nth-child(4){animation-delay:.105s}
+.anim-in > :nth-child(5){animation-delay:.14s} .anim-in > :nth-child(6){animation-delay:.175s} .anim-in > :nth-child(7){animation-delay:.21s}
+.anim-in > :nth-child(n+8){animation-delay:.245s}
+.anim-push{animation:pushIn .4s var(--ease-out) both}
+.anim-pop{animation:popBack .4s var(--ease-out) both}
+.results:not([hidden]),.when-panel:not([hidden]){animation:dropIn .24s var(--ease-out);transform-origin:top center}
+.when-panel.closing{animation:dropOut .17s ease-in forwards}
+.chat.closing{animation:popOut .18s ease-in forwards}
+.mk-in{animation:mkIn .55s var(--ease-spring) both;transform-origin:50% 100%}
+.legend{transition:opacity .35s var(--ease-out),transform .45s var(--ease-spring),background-color .3s}
+.toast{transition:opacity .3s var(--ease-out),transform .45s var(--ease-spring)}
+.btn,.chip,.icon-btn,.fab,.fab.loc,.ctrl button,.qc button,.res,.route,button.item,.when-btn,.swap{transition:transform .22s var(--ease-out),background-color .2s,color .2s,box-shadow .2s}
+.btn:active,.chip:active,.icon-btn:active,.fab:active,.fab.loc:active,.ctrl button:active,.qc button:active,.when-btn:active{transform:scale(.95)}
+.chip:hover{transform:translateY(-1px)}
+.meter i{transition:width .6s var(--ease-out),background-color .3s}
+.fab.loc svg{transition:transform .4s var(--ease-spring)}
+.fab.loc[data-state="follow"] svg{transform:scale(1.08)}
+@media (max-width:760px){
+  .tab-ind{display:block;position:absolute;top:6px;width:52px;height:26px;border-radius:var(--r-card);background:var(--green-tint);pointer-events:none;
+    left:calc(10px + (100% - 20px)/3*var(--i, 0) + ((100% - 20px)/3 - 52px)/2);transition:left .42s var(--ease-out)}
+  .tabbar button[aria-pressed="true"] span{background:transparent}
+  .tabbar button span{transition:color .25s,transform .3s var(--ease-spring)}
+  .tabbar button[aria-pressed="true"] span{transform:scale(1.08)}
+  .panel{transition:height .5s var(--ease-sheet),background-color .3s}
+}
+/* polish: chat springs, planner bars, skeletons, theme reveal */
+.chat{animation:chatIn .46s var(--ease-spring)}
+@keyframes chatIn{from{opacity:0;transform:scale(.92) translateY(16px)}to{opacity:1;transform:none}}
+.msg.in{transform-origin:0 100%;animation:bubbleIn .44s var(--ease-spring) both}
+.msg.out{transform-origin:100% 100%;animation:bubbleIn .44s var(--ease-spring) both}
+@keyframes bubbleIn{from{opacity:0;transform:scale(.55) translateY(10px)}45%{opacity:1}to{opacity:1;transform:none}}
+.typing i{animation:hop 1.2s var(--ease-out) infinite}
+@keyframes hop{0%,55%,100%{transform:none;opacity:.4}25%{transform:translateY(-4px);opacity:1}}
+.chat:not(.closing) .qchips button{animation:rise .42s var(--ease-out) both}
+.qchips button:nth-child(2){animation-delay:.06s} .qchips button:nth-child(3){animation-delay:.12s} .qchips button:nth-child(4){animation-delay:.18s}
+.send{transition:transform .25s var(--ease-spring),background-color .2s}
+.send:not(:disabled){animation:sendOn .34s var(--ease-spring)}
+.send:not(:disabled):active{transform:scale(.88)}
+@keyframes sendOn{from{transform:scale(.75)}to{transform:none}}
+.pbar{display:block;height:3px;border-radius:2px;background:var(--fill);margin-top:6px;overflow:hidden;max-width:200px}
+.pbar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#E6C229,#E8710A);transform-origin:left center}
+.pl-rows.fresh > .item{animation:rise .46s var(--ease-out) both;animation-delay:calc(var(--k, 0) * 36ms)}
+.pl-rows.fresh .pbar i{animation:grow .8s var(--ease-out) both;animation-delay:calc(var(--k, 0) * 36ms + .14s)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:none}}
+.skel.sm{height:30px}
+.pcode{display:inline-block;margin-left:2px;padding:0 5px;border-radius:4px;background:var(--fill);color:var(--label2);font:500 11.5px/18px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em;vertical-align:1px}
+.skel.stat-skel{height:66px;margin:0;border-radius:var(--r-card)}
+button.item.on{transition:background-color .25s,box-shadow .3s var(--ease-out)}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="map" aria-label="Map"></div>
+
+<!-- search -->
+<div class="search material" id="search">
+  <div class="search-row">
+    <span class="app-icon" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M5 19C5 10.5 10.5 5 19 5c0 8.5-5.5 14-14 14Z"/><path d="M5 19 13 11"/></svg></span>
+    <input id="q" type="search" placeholder="Search parks, cafés, metro…" autocomplete="off" aria-label="Search places">
+    <button class="icon-btn" id="qClear" aria-label="Clear search" hidden><svg class="i" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+    <span class="vline"></span>
+    <button class="icon-btn" id="themeBtn" title="Appearance" aria-label="Appearance" aria-haspopup="menu" aria-expanded="false">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" style="fill:currentColor;stroke:none"/></svg>
+    </button>
+  </div>
+  <div class="results" id="results" hidden></div>
+  <div class="menu" id="themeMenu" role="menu" aria-label="Appearance" hidden>
+    <div class="menu-h">Appearance</div>
+    <button role="menuitemradio" data-theme-opt="system" aria-checked="true"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="1.5"/><path d="M8.5 20h7M12 16.5V20"/></svg>System<svg class="i ck" viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></button>
+    <button role="menuitemradio" data-theme-opt="light" aria-checked="false"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg>Light<svg class="i ck" viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></button>
+    <button role="menuitemradio" data-theme-opt="dark" aria-checked="false"><svg class="i" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>Dark<svg class="i ck" viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></button>
+    <hr>
+    <button role="menuitem" id="quickToggle"><svg class="i" viewBox="0 0 24 24"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg>Switch now<span class="kbd">⇧D</span></button>
+  </div>
+</div>
+
+<!-- category chips -->
+<div class="chips" id="chips" role="toolbar" aria-label="Place categories"></div>
+
+<!-- panel (desktop) / bottom sheet (phone) -->
+<section class="panel material" id="panel" aria-label="Details">
+  <div class="handle" id="handle" role="button" aria-label="Resize panel" tabindex="0"></div>
+  <div class="panel-head">
+    <div class="seg" role="group" aria-label="Mode"><span class="seg-thumb"></span>
+      <button data-tab="explore" aria-pressed="true">Explore</button>
+      <button data-tab="routes" aria-pressed="false">Routes</button>
+      <button data-tab="planner" aria-pressed="false">Planner</button>
+    </div>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <div id="walkBar"></div><div id="when"></div><div id="whenPanel" class="when-panel" hidden></div>
+    <div id="v-explore"></div>
+    <div id="v-place" hidden></div>
+    <div id="v-routes" hidden></div>
+    <div id="v-planner" hidden></div>
+  </div>
+</section>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections"><span class="tab-ind"></span>
+  <button data-tab="explore" aria-pressed="true"><span><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/></svg></span>Explore</button>
+  <button data-tab="routes" aria-pressed="false"><span><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8"/></svg></span>Routes</button>
+  <button data-tab="planner" aria-pressed="false"><span><svg class="i" viewBox="0 0 24 24"><path d="M12 21v-7"/><path d="M12 14c0-4 2.5-6.5 7-7 0 4.5-2.5 7-7 7Z"/><path d="M12 16c0-3-2-5-5.5-5.5C6.5 14 8.5 16 12 16Z"/></svg></span>Planner</button>
+</nav>
+
+<div class="ctrls">
+  <div class="ctrl material">
+    <button id="layerBtn" aria-pressed="false" title="Shade layer (sample)" aria-label="Show shade layer"><svg class="i" viewBox="0 0 24 24"><path d="m12 3.5 8.5 4.5L12 12.5 3.5 8 12 3.5Z"/><path d="m3.5 12 8.5 4.5 8.5-4.5"/><path d="m3.5 16 8.5 4.5 8.5-4.5"/></svg></button>
+    <button id="compass" title="Reset north" aria-label="Reset north"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 8.5 12h7L12 3Z" style="fill:#E5372B;stroke:#E5372B"/><path d="M12 21l3.5-9h-7L12 21Z"/></svg></button>
+  </div>
+</div>
+
+<div class="fabs">
+  <button class="fab loc" id="locBtn" data-state="off" title="Show your location" aria-label="Show your location">
+    <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle class="loc-dot" cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+  </button>
+  <div class="ctrl zoom gbtn">
+    <button id="zin" title="Zoom in" aria-label="Zoom in"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button id="zout" title="Zoom out" aria-label="Zoom out"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+  </div>
+  <button class="fab dir" id="dirBtn" title="Directions" aria-label="Directions">
+    <svg class="i" viewBox="0 0 24 24" style="stroke-width:2.2"><path d="M12 2.5 21.5 12 12 21.5 2.5 12 12 2.5Z"/><path d="M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2"/></svg>
+  </button>
+</div>
+
+<div class="legend material" id="legend"><b><span id="legendLabel">Sample shade</span> · <span id="legendTime" class="num">4:00 PM</span></b><span>Sunny</span><span class="ramp"></span><span>Shady</span></div>
+<div class="tag material" id="dataTag">Design preview · shade values are sample data</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<section class="chat material" id="chat" hidden aria-label="Shade assistant">
+  <header>
+    <span class="app-icon" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M5 19C5 10.5 10.5 5 19 5c0 8.5-5.5 14-14 14Z"/><path d="M5 19 13 11"/></svg></span>
+    <div class="chat-title"><h3>Shade Assistant</h3><p>Sample replies in this preview</p></div>
+    <button class="icon-btn" id="closeChat" aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+  </header>
+  <div class="msgs" id="msgs"><div class="msg in">Hi! Ask me about shade, routes, or the best time to walk.</div></div>
+  <div class="qchips"><button>When is it shadiest?</button><button>Why is this route cooler?</button><button>Any parks nearby?</button></div>
+  <form class="composer" id="composer">
+    <input id="msgIn" placeholder="Message" autocomplete="off" aria-label="Message">
+    <button class="send" id="sendBtn" disabled aria-label="Send"><svg class="i" viewBox="0 0 24 24" style="stroke-width:2.4"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+  </form>
+</section>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const params = new URLSearchParams(location.search);
+const isPhone = () => innerWidth <= 760;
+
+/* ============================================================
+   Data sources (all free, no API key needed)
+   Map tiles + fonts: OpenFreeMap (OpenStreetMap data, OpenMapTiles schema)
+   Search: Photon · Walking routes: FOSSGIS OSRM · Weather/air: Open-Meteo
+   ============================================================ */
+let TILES  = 'https://tiles.openfreemap.org/planet';
+let GLYPHS = 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf';
+/* Offline region: when this page is served by your backend (/app) or opened with ?api=http://localhost:8000,
+   map tiles, street shade, walking routes and search all come from the laptop, so it works without internet. */
+/* Where the backend is: ?api=..., or the <meta name="shade-api"> tag (set this for the deployed site), or the backend itself (/app) */
+const API = (new URLSearchParams(location.search).get('api') || (document.querySelector('meta[name="shade-api"]') || {}).content
+  || (/^\/app\/?$/.test(location.pathname) ? location.origin : '')).replace(/\/$/, '');
+let REGION = null;
+let regionReq = null;
+function initRegion(){            /* starts loading the region info; the map waits at most 3 s for it */
+  if (!API) return Promise.resolve();
+  regionReq = regionReq || (async () => {
+    for (let attempt = 0; attempt < 3 && !REGION; attempt++){
+      try {
+        const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 30000);   /* a cold AWS Lambda can take ~10-20 s */
+        const r = await fetch(API + '/api/region/info', {signal:ctl.signal}); clearTimeout(tm);
+        if (r.ok){ applyRegion(await r.json()); break; }
+      } catch (e) {}
+    }
+  })();
+  return Promise.race([regionReq, new Promise(res => setTimeout(res, 3000))]);
+}
+function applyRegion(info){
+  REGION = info;
+  if (REGION.basemap && !mapReady && !map){ TILES = API + '/offline/tiles.json'; GLYPHS = API + '/offline/fonts/{fontstack}/{range}.pbf'; }   /* laptop: saved map */
+  AREAS = [{key:REGION.key, name:REGION.name, lng:REGION.center[1], lat:REGION.center[0], r:REGION.radius, region:true}];
+  $('#legendLabel').textContent = 'Shade';
+  $('.chat-title p').textContent = 'Amazon Bedrock · answers from the shade data';
+  const qs = ['Shadiest way to the nearest metro', 'When is it shadiest here today?', 'Where should trees go here?'];
+  $$('.qchips button').forEach((b, i) => { b.textContent = qs[i] || b.textContent; });
+  $('#msgs').firstElementChild.textContent = 'Hi! Ask me for a shady walk to anywhere in ' + REGION.name.split(' (')[0] + ', when a street is coolest, or where trees are needed.';
+  $('#dataTag').textContent = (REGION.basemap ? 'Offline data · ' : 'Live data · ') + REGION.name;
+  if (mapReady){
+    map.getSource('areas').setData(areasFC()); map.getSource('area-pts').setData(areaPtsFC());
+    shadeSegs.clear(); segGrid.clear(); map.getSource('shade').setData(EMPTY);
+    updateShadePaint(); applyShadeVisibility(); scheduleNearby(true);
+  }
+  renderExplore();
+}
+const whenISO = d => new Date(d.getTime() + 5.5*3600e3).toISOString().slice(0, 16) + '+05:30';   /* Delhi time */
+const PHOTON = 'https://photon.komoot.io';
+const OSRM   = 'https://routing.openstreetmap.de/routed-foot/route/v1/driving';
+const METEO  = 'https://api.open-meteo.com/v1/forecast';
+const AIR    = 'https://air-quality-api.open-meteo.com/v1/air-quality';
+
+/* Shade-data areas. SAMPLE positions: in the real app these come from your backend (/api/areas). */
+let AREAS = [
+  {key:'chandni_chowk',   name:'Chandni Chowk',   lng:77.2302, lat:28.6562, r:850},
+  {key:'connaught_place', name:'Connaught Place', lng:77.2167, lat:28.6315, r:850},
+  {key:'lajpat_nagar',    name:'Lajpat Nagar',    lng:77.2433, lat:28.5677, r:850},
+];
+/* ---------- time + sun (SunCalc formulas) ---------- */
+const RADS = Math.PI/180, DAY_MS = 864e5, J1970 = 2440588, J2000 = 2451545, OBL = RADS*23.4397, J0 = 0.0009;
+const toDays = d => d.valueOf()/DAY_MS - 0.5 + J1970 - J2000;
+const meanAnom = d => RADS*(357.5291 + 0.98560028*d);
+const eclLng = M => M + RADS*(1.9148*Math.sin(M) + 0.02*Math.sin(2*M) + 0.0003*Math.sin(3*M)) + RADS*102.9372 + Math.PI;
+function sunPos(date, lat, lng){
+  const lw = -lng*RADS, phi = lat*RADS, d = toDays(date), L = eclLng(meanAnom(d));
+  const dec = Math.asin(Math.sin(OBL)*Math.sin(L)), ra = Math.atan2(Math.sin(L)*Math.cos(OBL), Math.cos(L));
+  const H = RADS*(280.16 + 360.9856235*d) - lw - ra;
+  const alt = Math.asin(Math.sin(phi)*Math.sin(dec) + Math.cos(phi)*Math.cos(dec)*Math.cos(H));
+  const az = Math.atan2(Math.sin(H), Math.cos(H)*Math.sin(phi) - Math.tan(dec)*Math.cos(phi));
+  return {alt: alt/RADS, az: (az/RADS + 540) % 360};   /* az: compass bearing from north */
+}
+function sunTimes(date, lat, lng){
+  const lw = -lng*RADS, phi = lat*RADS, noon = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+  const n = Math.round(toDays(noon) - J0 - lw/(2*Math.PI)), ds = J0 + lw/(2*Math.PI) + n;
+  const M = meanAnom(ds), L = eclLng(M), dec = Math.asin(Math.sin(OBL)*Math.sin(L));
+  const transit = a => J2000 + a + 0.0053*Math.sin(M) - 0.0069*Math.sin(2*L), fromJ = j => new Date((j + 0.5 - J1970)*DAY_MS);
+  const w = Math.acos(clamp((Math.sin(-0.833*RADS) - Math.sin(phi)*Math.sin(dec))/(Math.cos(phi)*Math.cos(dec)), -1, 1));
+  const Jnoon = transit(ds), Jset = transit(J0 + (w + lw)/(2*Math.PI) + n);
+  return {rise: fromJ(Jnoon - (Jset - Jnoon)), set: fromJ(Jset)};
+}
+/* SAMPLE shade model, fitted to your Chandni Chowk output (12% at noon, 17% at 8 AM, 26% at 6 PM in May):
+   the lower the sun, the longer the shadows. The real app will read your pre-built monthly shade data instead. */
+const areaShadePct = alt => alt <= 0 ? null : Math.min(60, 12 + 3.05*(1/Math.tan(Math.max(alt, 4)*RADS) - 0.105));
+const fmtTime = d => d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+function fmtDay(d){
+  const t = new Date(), tm = new Date(t); tm.setDate(t.getDate() + 1);
+  if (d.toDateString() === t.toDateString()) return 'Today';
+  if (d.toDateString() === tm.toDateString()) return 'Tomorrow';
+  return d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'});
+}
+const fmtWhen = d => `${fmtDay(d)}, ${fmtTime(d)}`;
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const roundTo15 = d => { const n = new Date(d); n.setMinutes(Math.round(n.getMinutes()/15)*15, 0, 0); return n; };
+const compass = az => ['north','north-east','east','south-east','south','south-west','west','north-west'][Math.round(az/45) % 8];
+
+/* ---------- 24px stroke glyphs ---------- */
+const G = {
+  leaf:'M5 19C5 10.5 10.5 5 19 5c0 8.5-5.5 14-14 14Z M5 19 13 11',
+  food:'M6.5 3v6a2 2 0 0 0 4 0V3 M8.5 9v12 M17 3c-2 1.4-2.6 4-2.6 7.5H17V21',
+  cafe:'M4.5 9.5h11v4.5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5Z M15.5 10.5h1.2a2.6 2.6 0 0 1 0 5.2h-1.2 M8 3.5v2.5 M11.5 3.5v2.5',
+  park:'M12 3a5 5 0 0 0-4.7 6.7A4.2 4.2 0 0 0 8.8 17.5h6.4a4.2 4.2 0 0 0 1.5-7.8A5 5 0 0 0 12 3Z M12 12.5V21',
+  transit:'M7.5 3.5h9a2.5 2.5 0 0 1 2.5 2.5v8a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a2.5 2.5 0 0 1 2.5-2.5Z M5 10.5h14 M9 14h.01 M15 14h.01 M8.5 21l1.5-3.5 M15.5 21 14 17.5',
+  shop:'M5 8.5h14l-1.2 12H6.2Z M9 8.5V7a3 3 0 0 1 6 0v1.5',
+  sights:'M3.5 20.5h17 M5 10h14 M12 3.5l8 5H4Z M7 10v8 M12 10v8 M17 10v8',
+  health:'M12 5.5v13 M5.5 12h13',
+  pin:'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z M12 7.7a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6',
+  sparkle:'M11 3c.6 3.9 2.1 5.4 6 6-3.9.6-5.4 2.1-6 6-.6-3.9-2.1-5.4-6-6 3.9-.6 5.4-2.1 6-6Z M18.5 14.5c.3 1.8 1 2.5 2.8 2.8-1.8.3-2.5 1-2.8 2.8-.3-1.8-1-2.5-2.8-2.8 1.8-.3 2.5-1 2.8-2.8Z',
+  chev:'m9 6 6 6-6 6', back:'m15 6-6 6 6 6', check:'m6 12.5 4 4 8-9',
+  swap:'M8 20V4M4.5 7.5 8 4l3.5 3.5M16 4v16m-3.5-3.5L16 20l3.5-3.5',
+  dir:'M12 2.5 21.5 12 12 21.5 2.5 12 12 2.5Z M9 14v-2.5a1.5 1.5 0 0 1 1.5-1.5H15m-2-2 2 2-2 2',
+  share:'M12 15V3.5 M8 7.5l4-4 4 4 M5 12v7.5h14V12',
+  sun:'M12 8a4 4 0 1 0 0 8 4 4 0 1 0 0-8Z M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4',
+  cloud:'M7 18.5h10a4 4 0 0 0 .6-8A5.5 5.5 0 0 0 7 11a3.8 3.8 0 0 0 0 7.5Z',
+  moon:'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z',
+  loc:'M20 4 4 11l7 2 2 7 7-16Z',
+  cal:'M4 6h16v14H4Z M4 10h16 M8 3.5v4 M16 3.5v4',
+  walk:'M13 3.5a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 1 0 0-3.2Z M10.5 21l1.8-5.5 2.7 2.7V21 M12.3 15.5l1-5.2-2.8 1.2-1.5 3 M13.3 10.3l1.7 2.7 2.5.8',
+};
+const svgI = name => `<svg class="i" viewBox="0 0 24 24"><path d="${G[name]}"/></svg>`;
+
+/* ---------- place categories, mapped to OpenMapTiles `poi` classes ---------- */
+const CATS = {
+  park:    {label:'Parks & gardens',  one:'Park',       glyph:'park',    color:'#1E8E3E', ink:['#137333','#81C995'], classes:['park','garden','playground','picnic_site','zoo','nature_reserve','dog_park']},
+  cafe:    {label:'Cafés',            one:'Café',       glyph:'cafe',    color:'#E8710A', ink:['#B45309','#FDBA74'], classes:['cafe','bakery','ice_cream']},
+  food:    {label:'Restaurants',      one:'Restaurant', glyph:'food',    color:'#E8710A', ink:['#B45309','#FDBA74'], classes:['restaurant','fast_food','food_court','bar','beer','pub','biergarten']},
+  transit: {label:'Metro & rail',     one:'Station',    glyph:'transit', color:'#3F51B5', ink:['#3949AB','#AAB4F2'], classes:['railway']},
+  shop:    {label:'Shopping',         one:'Shop',       glyph:'shop',    color:'#1A73E8', ink:['#1967D2','#8AB4F8'], classes:['shop','grocery','clothing_store','marketplace','mall','department_store','jewelry','books']},
+  sights:  {label:'Sights & worship', one:'Landmark',   glyph:'sights',  color:'#0E9AA7', ink:['#0B7A84','#78D9E0'], classes:['place_of_worship','attraction','museum','castle','monument','memorial','art_gallery','viewpoint','theatre','cinema']},
+  health:  {label:'Health',           one:'Health',     glyph:'health',  color:'#D93025', ink:['#C5221F','#F28B82'], classes:['hospital','pharmacy','doctors','dentist','clinic']},
+};
+const CHIP_ORDER = ['park','cafe','food','transit','shop','sights','health'];
+const CLASS_TO_CAT = {}; for (const [k, c] of Object.entries(CATS)) for (const cl of c.classes) CLASS_TO_CAT[cl] = k;
+const ALL_CLASSES = Object.values(CATS).flatMap(c => c.classes);
+const RANK_CLASSES = ALL_CLASSES.filter(c => c !== 'railway');
+const STATION_SUBS = ['station','subway','halt'];
+const OSM_VALUE_TO_CAT = {cafe:'cafe',bakery:'cafe',ice_cream:'cafe',restaurant:'food',fast_food:'food',food_court:'food',bar:'food',pub:'food',park:'park',garden:'park',playground:'park',
+  station:'transit',subway_entrance:'transit',halt:'transit',hospital:'health',pharmacy:'health',clinic:'health',doctors:'health',
+  place_of_worship:'sights',attraction:'sights',museum:'sights',monument:'sights',memorial:'sights',castle:'sights',fort:'sights',mall:'shop',marketplace:'shop',supermarket:'shop',department_store:'shop'};
+const prettySub = s => !s ? '' : ({place_of_worship:'Place of worship',fast_food:'Fast food',food_court:'Food court',ice_cream:'Ice cream',
+  station:'Station',subway:'Metro station',halt:'Station',picnic_site:'Picnic site',art_gallery:'Art gallery',department_store:'Department store'}[s]
+  || (s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g,' ')));
+
+/* ---------- geo helpers ---------- */
+const rad = d => d*Math.PI/180;
+function dist(a, b){ const dLat = rad(b.lat-a.lat), dLng = rad(b.lng-a.lng);
+  const h = Math.sin(dLat/2)**2 + Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLng/2)**2; return 2*6371000*Math.asin(Math.sqrt(h)); }
+const fmtDist = m => m < 950 ? `${Math.max(10, Math.round(m/10)*10)} m` : `${(m/1000).toFixed(m < 9500 ? 1 : 0)} km`;
+const walkMin = m => Math.max(1, Math.round(m/80));
+function circle(lng, lat, r, n = 72){ const pts = []; for (let i = 0; i <= n; i++){ const t = i/n*2*Math.PI;
+  pts.push([lng + r*Math.cos(t)/(111320*Math.cos(rad(lat))), lat + r*Math.sin(t)/110540]); } return pts; }
+const areaAt = p => AREAS.find(a => dist(p, a) <= a.r) || null;
+const nearestArea = p => AREAS.map(a => ({a, d: Math.max(0, dist(p, a) - a.r)})).sort((x, y) => x.d - y.d)[0];
+
+/* ---------- state ---------- */
+const state = { view:'explore', tab:'explore', cat:null, shade:false, me:null, follow:false, locState:'off',
+  place:null, trip:null, pick:null, theme:'system', sheet:'peek', when:null, walk:null };
+let map = null, mapReady = false;
+const origin = () => state.me || (map ? (({lng, lat}) => ({lng, lat}))(map.getCenter()) : {lng:77.2302, lat:28.6562});
+const nowT = () => state.when ? new Date(state.when) : new Date();   /* when: null = live clock */
+const effT = () => { const t = nowT(); if (state.view === 'planner') t.setHours(14, 0, 0, 0); return t; };   /* Planner looks at 2 PM */
+const sunNow = () => { const o = origin(); return sunPos(effT(), o.lat, o.lng); };
+const isNight = () => sunNow().alt < -0.833;
+const kf = () => (areaShadePct(sunNow().alt) ?? 0) / 16;
+
+/* ============================================================
+   Map style: our own Google-like look on OpenMapTiles data
+   ============================================================ */
+const PAL = {
+  light:{ land:'#F4F3F0', residential:'#F1EFEA', commercial:'#FBEEDD', industrial:'#EEEBE6', hospital:'#FBE9E7', school:'#F3F0E2', cemetery:'#E1EADA',
+    park:'#C9EBCF', wood:'#BCE3C5', grass:'#CDEBD0', pitch:'#D2EDD5', water:'#9DC7F5', building:'#E8E4DD', buildingLine:'#DBD5CB',
+    path:'#FFFFFF', pathCase:'#D9D5CD', minor:'#FFFFFF', minorCase:'#D8D4CC', major:'#FFFFFF', majorCase:'#C6CDD7', primary:'#DCE3EE', primaryCase:'#BDC8D7',
+    motorway:'#F8D16C', motorwayCase:'#DDAE3D', rail:'#C4C7CD', transit:'#8A91D0',
+    label:'#3C4043', labelMinor:'#5F6368', halo:'#FFFFFF', waterLabel:'#3B6FB6', placeMinor:'#6B6F75',
+    rtCase:'#FFFFFF', rtShadow:'rgba(0,0,0,0.30)', coolest:'#1E9E47', fastest:'#E8710A', alt:'#5B8DEF', area:'#1E9E47', areaFill:'rgba(30,158,71,0.05)',
+    accFill:'rgba(26,115,232,0.12)', accLine:'rgba(26,115,232,0.35)', sunny:'#E8710A', mid:'#E6C229', shady:'#1E9E47' },
+  dark:{ land:'#1D1F23', residential:'#1F2125', commercial:'#29251F', industrial:'#222326', hospital:'#2D2224', school:'#25241E', cemetery:'#1D2922',
+    park:'#1B3325', wood:'#1A3024', grass:'#1C3226', pitch:'#1D3127', water:'#13304D', building:'#2A2C31', buildingLine:'#34373D',
+    path:'#3A3D44', pathCase:'#2A2C31', minor:'#3B3E45', minorCase:'#2A2C31', major:'#464A52', majorCase:'#30333A', primary:'#555B66', primaryCase:'#3A3F48',
+    motorway:'#8A7442', motorwayCase:'#5D4E2E', rail:'#4B4E56', transit:'#7179BE',
+    label:'#E8EAED', labelMinor:'#A5ABB2', halo:'#1D1F23', waterLabel:'#8AB4F8', placeMinor:'#9AA0A6',
+    rtCase:'#F5F5F7', rtShadow:'rgba(0,0,0,0.75)', coolest:'#34C759', fastest:'#FF9F0A', alt:'#7BA7FF', area:'#34C759', areaFill:'rgba(52,199,89,0.06)',
+    accFill:'rgba(138,180,248,0.14)', accLine:'rgba(138,180,248,0.4)', sunny:'#FF9F0A', mid:'#E6C229', shady:'#34C759' }
+};
+const NAME = ['coalesce', ['get','name_en'], ['get','name:latin'], ['get','name']];
+const F_REG = ['Noto Sans Regular'], F_BOLD = ['Noto Sans Bold'], F_ITAL = ['Noto Sans Italic'];
+const zi = (...stops) => ['interpolate', ['exponential', 1.5], ['zoom'], ...stops];
+const SEL = (on, off) => ['case', ['==', ['get','sel'], 1], on, off];   /* chosen route vs the others */
+const cls = (...v) => ['match', ['get','class'], v, true, false];
+const notTunnel = ['!=', ['get','brunnel'], 'tunnel'];
+const tunnelOpacity = ['case', ['==', ['get','brunnel'], 'tunnel'], 0.45, 1];
+
+function baseLayers(P){
+  const road = (id, filter, color, width, minzoom, extra = {}) => ({ id, type:'line', source:'omt', 'source-layer':'transportation', minzoom, filter,
+    layout:{'line-cap':'round','line-join':'round'}, paint:{'line-color':color, 'line-width':width, 'line-opacity':tunnelOpacity, ...extra} });
+  const pedW = (a, b) => ['match', ['get','subclass'], ['pedestrian'], a, b];
+  const roadLabel = (id, filter, minzoom) => ({id, type:'symbol', source:'omt', 'source-layer':'transportation_name', minzoom, filter,
+    layout:{'symbol-placement':'line', 'text-field':NAME, 'text-font':F_REG, 'text-size':zi(14,10.5,18,13), 'text-rotation-alignment':'map', 'symbol-spacing':320},
+    paint:{'text-color':P.labelMinor, 'text-halo-color':P.halo, 'text-halo-width':1.4}});
+  return [
+    {id:'bg', type:'background', paint:{'background-color':P.land}},
+    {id:'lu-res', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:11, filter:cls('residential','neighbourhood'), paint:{'fill-color':P.residential}},
+    {id:'lu-com', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:11, filter:cls('commercial','retail'), paint:{'fill-color':P.commercial}},
+    {id:'lu-ind', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:11, filter:cls('industrial','railway','garages'), paint:{'fill-color':P.industrial}},
+    {id:'lu-hosp', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:12, filter:cls('hospital'), paint:{'fill-color':P.hospital}},
+    {id:'lu-school', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:12, filter:cls('school','college','university','kindergarten'), paint:{'fill-color':P.school}},
+    {id:'lu-cem', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:12, filter:cls('cemetery'), paint:{'fill-color':P.cemetery}},
+    {id:'lc-wood', type:'fill', source:'omt', 'source-layer':'landcover', filter:cls('wood'), paint:{'fill-color':P.wood}},
+    {id:'lc-grass', type:'fill', source:'omt', 'source-layer':'landcover', filter:cls('grass'), paint:{'fill-color':P.grass}},
+    {id:'lu-pitch', type:'fill', source:'omt', 'source-layer':'landuse', minzoom:13, filter:cls('pitch','playground','stadium'), paint:{'fill-color':P.pitch}},
+    {id:'park', type:'fill', source:'omt', 'source-layer':'park', paint:{'fill-color':P.park, 'fill-opacity':0.8}},
+    {id:'water', type:'fill', source:'omt', 'source-layer':'water', filter:notTunnel, paint:{'fill-color':P.water}},
+    {id:'waterway', type:'line', source:'omt', 'source-layer':'waterway', filter:notTunnel, paint:{'line-color':P.water, 'line-width':zi(10,0.6,14,1.5,18,5)}},
+    {id:'building', type:'fill', source:'omt', 'source-layer':'building', minzoom:14.5, paint:{'fill-color':P.building, 'fill-outline-color':P.buildingLine,
+      'fill-opacity':['interpolate', ['linear'], ['zoom'], 14.5, 0, 15.5, 1]}},
+    road('path-case', ['all', cls('path'), ['==', ['get','subclass'], 'pedestrian']], P.pathCase, zi(14,2.6,16,7,18,18), 14),
+    road('minor-case', cls('minor','service','track'), P.minorCase, zi(13,1.2,14,2.6,16,7.6,18,21), 13.5),
+    road('major-case', cls('secondary','tertiary'), P.majorCase, zi(10,1.2,12,2.6,14,5.6,16,11,18,27), 10),
+    road('primary-case', cls('primary','trunk'), P.primaryCase, zi(8,1.4,10,2.2,12,3.8,14,7.2,16,13.2,18,33), 8),
+    road('motorway-case', cls('motorway'), P.motorwayCase, zi(6,1.4,10,3,12,4.4,14,8.4,16,15.4,18,37), 6),
+    road('path', cls('path'), P.path, zi(14,pedW(1.8,0.8),16,pedW(5.6,1.6),18,pedW(16,3.5)), 14),
+    road('minor', cls('minor','service','track'), P.minor, zi(12,0.4,14,1.6,16,6,18,18.5), 12),
+    road('major', cls('secondary','tertiary'), P.major, zi(10,0.6,12,1.6,14,4,16,9,18,24), 10),
+    road('primary', cls('primary','trunk'), P.primary, zi(8,0.8,10,1.4,12,2.6,14,5.5,16,11,18,30), 8),
+    road('motorway', cls('motorway'), P.motorway, zi(6,0.8,10,2,12,3.2,14,6.5,16,13,18,34), 6),
+    road('rail', cls('rail'), P.rail, zi(12,0.6,14,1,16,1.8,18,3), 12),
+    road('transit-line', cls('transit'), P.transit, zi(11,0.8,14,1.6,16,2.5,18,4), 11, {'line-opacity':0.7}),
+    {id:'water-label', type:'symbol', source:'omt', 'source-layer':'water_name', layout:{'text-field':NAME, 'text-font':F_ITAL, 'text-size':12, 'text-max-width':8},
+      paint:{'text-color':P.waterLabel, 'text-halo-color':P.halo, 'text-halo-width':1.2}},
+    roadLabel('road-label-major', cls('primary','trunk','secondary','tertiary'), 13.5),
+    roadLabel('road-label-minor', cls('minor','service','path'), 15.5),
+    {id:'place-minor', type:'symbol', source:'omt', 'source-layer':'place', minzoom:12, maxzoom:16.5, filter:cls('neighbourhood','quarter','suburb'),
+      layout:{'text-field':NAME, 'text-font':F_REG, 'text-size':zi(12,10,16,12), 'text-transform':'uppercase', 'text-letter-spacing':0.14, 'text-max-width':8},
+      paint:{'text-color':P.placeMinor, 'text-halo-color':P.halo, 'text-halo-width':1.4}},
+    {id:'place-major', type:'symbol', source:'omt', 'source-layer':'place', maxzoom:14, filter:cls('city','town','village'),
+      layout:{'text-field':NAME, 'text-font':F_BOLD, 'text-size':zi(5,11,12,16), 'text-max-width':8},
+      paint:{'text-color':P.label, 'text-halo-color':P.halo, 'text-halo-width':1.6}},
+  ];
+}
+
+/* POI layers. Ranked like Google: important places first, the rest as you zoom in. */
+const POI_RANKS = [{id:'poi-1', minzoom:14.5}, {id:'poi-2', minzoom:15.5}, {id:'poi-3', minzoom:16.5}];
+const classFilter = classes => ['match', ['get','class'], classes, true, false];
+const PRIORITY = ['park','cafe','food','sights'].flatMap(k => CATS[k].classes), SECONDARY = ['shop','health'].flatMap(k => CATS[k].classes);
+const rk = (op, n) => [op, ['get','rank'], n];
+const NONE = ['==', ['get','class'], '__none__'];
+function poiFilter(r){
+  const named = ['has','name'];
+  if (state.cat === 'transit') return NONE;
+  if (state.cat){ const c = classFilter(CATS[state.cat].classes);
+    return r.id === 'poi-1' ? ['all', named, rk('<', 6), c] : r.id === 'poi-2' ? ['all', named, rk('>=', 6), c] : NONE; }
+  if (r.id === 'poi-1') return ['all', named, rk('<', 6), classFilter(RANK_CLASSES)];
+  if (r.id === 'poi-2') return ['all', named, rk('>=', 6), ['any', classFilter(PRIORITY), ['all', classFilter(SECONDARY), rk('<', 14)]]];
+  return ['all', named, rk('>=', 14), classFilter(SECONDARY)];
+}
+function iconExpr(){ const e = ['match', ['get','class']]; for (const k of CHIP_ORDER) e.push(CATS[k].classes, 'i-' + k); e.push('i-pin'); return e; }
+function inkExpr(P){ const d = P === PAL.dark ? 1 : 0; const e = ['match', ['get','class']]; for (const k of CHIP_ORDER) e.push(CATS[k].classes, CATS[k].ink[d]); e.push(P.labelMinor); return e; }
+function poiLayers(P){
+  const layout = {'icon-image':iconExpr(), 'text-field':NAME, 'text-font':F_REG, 'text-size':11.5, 'text-max-width':8,
+    'text-variable-anchor':['left','right','top','bottom'], 'text-radial-offset':1.05, 'text-justify':'auto', 'text-optional':true, 'icon-padding':3, 'text-padding':3, 'symbol-sort-key':['match', ['get','class'], PRIORITY, ['/', ['get','rank'], 3], ['+', ['get','rank'], 6]]};
+  const paint = {'text-color':inkExpr(P), 'text-halo-color':P.halo, 'text-halo-width':1.4};
+  const layers = POI_RANKS.map(r => ({id:r.id, type:'symbol', source:'omt', 'source-layer':'poi', minzoom:r.minzoom, filter:poiFilter(r), layout, paint}));
+  layers.reverse(); /* top layer = placed first, so most important goes on top */
+  layers.push({id:'region-poi', type:'symbol', source:'region-poi', minzoom:10,
+    layout:{'icon-image':['concat', 'i-', ['get','cat']], 'icon-allow-overlap':true, 'text-field':['step', ['zoom'], '', 14, ['get','name']],
+      'text-font':F_REG, 'text-size':11.5, 'text-max-width':8, 'text-variable-anchor':['left','right','top','bottom'], 'text-radial-offset':1.05, 'text-optional':true},
+    paint:{'text-color':['match', ['get','cat'], ...CHIP_ORDER.flatMap(k => [k, CATS[k].ink[P === PAL.dark ? 1 : 0]]), P.labelMinor],
+      'text-halo-color':P.halo, 'text-halo-width':1.4}});
+  layers.push({id:'poi-transit', type:'symbol', source:'omt', 'source-layer':'poi', minzoom:12,
+    filter:['all', ['has','name'], ['==', ['get','class'], 'railway'], ['match', ['get','subclass'], STATION_SUBS, true, false]],
+    layout, paint:{...paint, 'text-color':CATS.transit.ink[P === PAL.dark ? 1 : 0]}});
+  return layers;
+}
+
+/* App layers: shade-data areas, sample shade colours, routes, location accuracy */
+function shadeColorExpr(P){
+  if (REGION) return ['interpolate', ['linear'], ['to-number', ['get','shade'], 0], 0, P.sunny, 0.45, P.mid, 0.8, P.shady];
+  const az = sunNow().az*RADS;   /* streets running across the sun's direction get more building shade */
+  const orient = ['+', 0.55, ['*', 0.75, ['abs', ['sin', ['-', az, ['to-number', ['get','brg'], 0]]]]]];
+  const v = ['min', 1, ['max', 0, ['+', ['*', ['get','b'], kf(), orient], ['get','j']]]];
+  return ['interpolate', ['linear'], v, 0, P.sunny, 0.45, P.mid, 0.8, P.shady];
+}
+function segShade(b, j, brg, sun){ return clamp(b*((areaShadePct(sun.alt) ?? 0)/16)*(0.55 + 0.75*Math.abs(Math.sin(sun.az*RADS - brg))) + j, 0, 1); }
+function updateShadePaint(){ if (mapReady){ map.setPaintProperty('shade-sample', 'line-color', shadeColorExpr(P0())); if (REGION) loadRegionShade(); } }
+const areasGeometry = () => ({type:'MultiPolygon', coordinates: AREAS.map(a => [circle(a.lng, a.lat, a.r)])});
+function appLayers(P){
+  return [
+    {id:'area-fill', type:'fill', source:'areas', paint:{'fill-color':P.areaFill}},
+    {id:'area-line', type:'line', source:'areas', paint:{'line-color':P.area, 'line-width':1.4, 'line-dasharray':[3,2], 'line-opacity':0.75}},
+    {id:'shade-sample', type:'line', source:'shade', minzoom:12.5,
+      layout:{'line-cap':'round', 'line-join':'round', visibility:'none'},
+      paint:{'line-color':shadeColorExpr(P), 'line-width':zi(13,1.2,16,4.5,18,12), 'line-opacity':0}},
+    {id:'acc-fill', type:'fill', source:'me-acc', paint:{'fill-color':P.accFill}},
+    {id:'acc-line', type:'line', source:'me-acc', paint:{'line-color':P.accLine, 'line-width':1}},
+    {id:'rt-shadow', type:'line', source:'routes', layout:{'line-cap':'round', 'line-join':'round', 'line-sort-key':['get','sel']},
+      paint:{'line-color':P.rtShadow, 'line-width':zi(12,SEL(13,8),16,SEL(22,13),18,SEL(32,20)), 'line-blur':zi(12,4,16,7,18,10),
+        'line-translate':[0,2], 'line-opacity':SEL(1,0.45)}},
+    {id:'rt-case', type:'line', source:'routes', layout:{'line-cap':'round', 'line-join':'round', 'line-sort-key':['get','sel']},
+      paint:{'line-color':P.rtCase, 'line-width':zi(12,SEL(9.5,6),16,SEL(16,10),18,SEL(24,15)), 'line-opacity':SEL(1,0.85)}},
+    {id:'rt-line', type:'line', source:'routes', layout:{'line-cap':'round', 'line-join':'round', 'line-sort-key':['get','sel']},
+      paint:{'line-color':['match', ['get','kind'], 'coolest', P.coolest, 'fastest', P.fastest, P.alt], 'line-width':zi(12,SEL(6,3.5),16,SEL(10.5,6.5),18,SEL(16,10)),
+        'line-opacity':SEL(1,0.6)}},
+    {id:'rt-arrow', type:'symbol', source:'routes', minzoom:13.5, filter:['==', ['get','sel'], 1],
+      layout:{'symbol-placement':'line', 'symbol-spacing':90, 'icon-image':'rt-arrow', 'icon-size':zi(13.5,0.42,16,0.58,18,0.85),
+        'icon-allow-overlap':true, 'icon-ignore-placement':true, 'icon-rotation-alignment':'map', 'icon-pitch-alignment':'map', 'icon-keep-upright':false},
+      paint:{'icon-opacity':0.95}},
+  ];
+}
+const areaLabelLayer = P => ({id:'area-label', type:'symbol', source:'area-pts', minzoom:10, maxzoom:15.6,
+  layout:{'text-field':['concat', ['get','name'], '\n', 'SHADE DATA'], 'text-font':F_BOLD, 'text-size':11.5, 'text-letter-spacing':0.04, 'text-line-height':1.25},
+  paint:{'text-color':P.area, 'text-halo-color':P.halo, 'text-halo-width':1.6}});
+const areasFC = () => ({type:'FeatureCollection', features: AREAS.map(a => ({type:'Feature', properties:{key:a.key, name:a.name}, geometry:{type:'Polygon', coordinates:[circle(a.lng, a.lat, a.r)]}}))});
+const areaPtsFC = () => ({type:'FeatureCollection', features: AREAS.map(a => ({type:'Feature', properties:{key:a.key, name:a.name}, geometry:{type:'Point', coordinates:[a.lng, a.lat]}}))});
+const EMPTY = {type:'FeatureCollection', features:[]};
+
+/* ---------- POI icons drawn on canvas: sharp rounded squares ---------- */
+function makeIcon(color, glyph){
+  const ratio = 2, px = 24*ratio, c = document.createElement('canvas'); c.width = c.height = px;
+  const ctx = c.getContext('2d'); ctx.scale(ratio, ratio);
+  const rr = (x, y, w, h, r) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); };
+  ctx.shadowColor = 'rgba(0,0,0,.28)'; ctx.shadowBlur = 2; ctx.shadowOffsetY = 0.6;
+  rr(2, 2, 20, 20, 5); ctx.fillStyle = '#fff'; ctx.fill(); ctx.shadowColor = 'transparent';
+  rr(3.5, 3.5, 17, 17, 3.6); ctx.fillStyle = color; ctx.fill();
+  ctx.save(); ctx.translate(6, 6); ctx.scale(0.5, 0.5);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (const part of G[glyph].split(/ (?=M)/)) ctx.stroke(new Path2D(part));
+  ctx.restore();
+  return ctx.getImageData(0, 0, px, px);
+}
+function addIcons(){
+  for (const k of CHIP_ORDER) if (!map.hasImage('i-' + k)) map.addImage('i-' + k, makeIcon(CATS[k].color, CATS[k].glyph), {pixelRatio:2});
+  if (!map.hasImage('i-pin')) map.addImage('i-pin', makeIcon('#7A7F87', 'pin'), {pixelRatio:2});
+}
+
+/* ============================================================
+   Map
+   ============================================================ */
+const P0 = () => PAL[isDarkTheme() ? 'dark' : 'light'];
+const initView = (() => { const at = (params.get('at') || '').split(',').map(Number);
+  return at.length >= 2 && at.every(n => !isNaN(n)) ? {center:[at[1], at[0]], zoom: at[2] || 16} : {center:[77.2302, 28.6562], zoom:15.2}; })();
+function camPad(){
+  if (isPhone()) return {top:120, bottom:sheetPx() + 70, left:30, right:30};
+  return {top:70, bottom:40, left:420, right:70};
+}
+function startMap(){
+  if (!window.maplibregl) return mapFail('The map library didn’t load. If you’re viewing this inside a preview pane, open the file in Chrome instead (see the instructions), and check your internet connection.');
+  try {
+    map = new maplibregl.Map({ container:'map', center:initView.center, zoom:initView.zoom, minZoom:3, maxZoom:19.5,
+      attributionControl:false, pitchWithRotate:false, touchPitch:false, fadeDuration:150,
+      style:{version:8, glyphs:GLYPHS, transition:{duration:450, delay:0}, sources:{omt:{type:'vector', url:TILES}}, layers:baseLayers(P0())} });
+  } catch (e) { return mapFail('Your browser couldn’t start the map (WebGL is needed).'); }
+  const EASE = t => 1 - Math.pow(1 - t, 4);
+  for (const fn of ['easeTo', 'flyTo']){ const orig = map[fn].bind(map); map[fn] = (o = {}, e) => orig({easing:EASE, ...o}, e); }
+  map.addControl(new maplibregl.AttributionControl({compact:true, customAttribution:'Search: <a href="https://photon.komoot.io" target="_blank" rel="noopener">Photon</a> · Routes: <a href="https://routing.openstreetmap.de" target="_blank" rel="noopener">FOSSGIS</a> · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>'}), 'bottom-right');
+  map.on('error', e => { const m = String((e && e.error && e.error.message) || ''); if (/fetch|network|load/i.test(m)) netWarn(); else console.warn('[map]', m); });
+  map.on('styleimagemissing', () => { if (mapReady) addIcons(); });
+  map.on('load', onMapLoad);
+  /* keep the attribution collapsed to an (i) button on phones; it opens on tap */
+  if (isPhone()) map.once('idle', () => { const a = document.querySelector('.maplibregl-ctrl-attrib'); if (a) a.classList.remove('maplibregl-compact-show'); });
+}
+function mapFail(msg){ const d = document.createElement('div'); d.className = 'map-fail'; d.innerHTML = `<div><b>Map unavailable</b>${esc(msg)}</div>`; document.body.appendChild(d); }
+let warned = false; function netWarn(){ if (!warned){ warned = true; toast('Some map data didn’t load. Check your internet connection.'); } }
+
+function onMapLoad(){
+  mapReady = true;
+  addIcons();
+  map.addSource('areas', {type:'geojson', data:areasFC()});
+  map.addSource('area-pts', {type:'geojson', data:areaPtsFC()});
+  map.addSource('routes', {type:'geojson', data:EMPTY});
+  map.addSource('me-acc', {type:'geojson', data:EMPTY});
+  map.addSource('shade', {type:'geojson', data:EMPTY});
+  map.addSource('region-poi', {type:'geojson', data:EMPTY});
+  map.addSource('planner-hi', {type:'geojson', data:EMPTY});
+  map.on('idle', harvestShade);
+  const P = P0();
+  try { map.addImage('rt-arrow', arrowImage(), {pixelRatio:2}); } catch (e) {}
+  for (const l of appLayers(P)) map.addLayer(l, 'water-label');
+  for (const l of poiLayers(P)) map.addLayer(l);
+  map.addLayer(areaLabelLayer(P));
+
+  map.addLayer({id:'planner-glow', type:'line', source:'planner-hi', layout:{'line-cap':'round', 'line-join':'round'},
+    paint:{'line-color':'#0A84FF', 'line-width':['interpolate', ['linear'], ['zoom'], 12, 12, 17, 30], 'line-blur':['interpolate', ['linear'], ['zoom'], 12, 6, 17, 14], 'line-opacity':0.4}}, 'region-poi');
+  map.addLayer({id:'planner-hi', type:'line', source:'planner-hi', layout:{'line-cap':'round', 'line-join':'round'},
+    paint:{'line-color':'#0A84FF', 'line-width':['interpolate', ['linear'], ['zoom'], 12, 4, 17, 11], 'line-opacity':0.7}}, 'region-poi');
+  map.on('click', 'rt-line', e => {
+    const t = state.trip, f = e.features && e.features[0]; if (state.pick || !t || !f || state.view !== 'routes') return;
+    e.preventDefault(); const i = +f.properties.i; if (i === t.sel) return;
+    t.sel = i; t.userSel = true; renderRouteList(); drawTrip(); renderWalkBar();
+  });
+  map.on('mouseenter', 'rt-line', () => { if (!state.pick) map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'rt-line', () => { if (!state.pick) map.getCanvas().style.cursor = ''; });
+  const poiIds = ['region-poi', 'poi-transit', ...POI_RANKS.map(r => r.id)];
+  map.on('click', poiIds, e => {
+    const f = e.features && e.features[0]; if (!f) return; e.preventDefault();
+    const p = f.layer.id === 'region-poi' ? {name:f.properties.name, cat:f.properties.cat, cls:f.properties.cls, lng:f.geometry.coordinates[0], lat:f.geometry.coordinates[1],
+      kind: f.properties.cls === 'metro' ? 'Metro station' : prettySub(f.properties.cls)} : featToPlace(f); if (!p) return;
+    if (state.pick) return setTripEnd(state.pick, {name:p.name, lng:p.lng, lat:p.lat});
+    openPlace(p);
+  });
+  map.on('mouseenter', poiIds, () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', poiIds, () => { map.getCanvas().style.cursor = ''; });
+  map.on('click', e => { if (!e.defaultPrevented && state.pick) pickPoint(e.lngLat); });
+  map.on('contextmenu', e => { if (state.pick) return pickPoint(e.lngLat); dropPin(e.lngLat); });
+  map.on('dragstart', () => { if (state.follow){ state.follow = false; setLoc(state.me ? 'on' : 'off'); } });
+  map.on('rotate', () => { $('#compass svg').style.transform = `rotate(${-map.getBearing()}deg)`; });
+  map.on('moveend', () => { scheduleNearby(); maybeWeather(); renderWhen(); if (state.view === 'planner') loadPlannerSoon(); });
+  map.on('move', () => { if (!state.me && sunMarker) sunMarker.setLngLat(map.getCenter()); });
+  applyDayNight(); syncRouteVisibility(); updateSunMarker();
+  scheduleNearby(true);
+  maybeWeather(true);
+  if (params.get('noloc') !== '1') autoLocate();
+}
+function applyMapTheme(){
+  if (!mapReady) return;
+  const P = P0();
+  for (const l of [...baseLayers(P), ...appLayers(P), ...poiLayers(P), areaLabelLayer(P)]){
+    if (!map.getLayer(l.id)) continue;
+    for (const [k, v] of Object.entries(l.paint || {})) { try { map.setPaintProperty(l.id, k, v); } catch (e) {} }
+  }
+  applyDayNight();
+}
+
+/* ============================================================
+   Appearance: System / Light / Dark
+   ============================================================ */
+const root = document.documentElement, mq = matchMedia('(prefers-color-scheme: dark)');
+state.theme = root.getAttribute('data-theme') || 'system';
+function isDarkTheme(){ return state.theme === 'dark' || (state.theme === 'system' && mq.matches); }
+function setTheme(t){
+  state.theme = t;
+  if (t === 'system') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', t);
+  try { localStorage.setItem('sr-theme', t); } catch (e) {}
+  $$('[data-theme-opt]').forEach(b => b.setAttribute('aria-checked', b.dataset.themeOpt === t));
+  document.body.classList.toggle('dark-ui', isDarkTheme());
+  applyMapTheme();
+}
+if (mq.addEventListener) mq.addEventListener('change', () => { if (state.theme === 'system') setTheme('system'); });
+const menu = $('#themeMenu'), themeBtn = $('#themeBtn');
+const openMenu = open => { menu.hidden = !open; themeBtn.setAttribute('aria-expanded', open); if (open) menu.querySelector('[aria-checked="true"]').focus(); };
+themeBtn.onclick = e => { e.stopPropagation(); openMenu(menu.hidden); };
+$$('[data-theme-opt]').forEach(b => b.onclick = () => { openMenu(false); themeReveal(b.dataset.themeOpt); });
+function themeReveal(t){
+  const willDark = t === 'dark' || (t === 'system' && mq.matches);
+  if (!document.startViewTransition || !motionOK() || willDark === isDarkTheme()) return setTheme(t);
+  const r = themeBtn.getBoundingClientRect(), x = r.left + r.width/2, y = r.top + r.height/2;
+  const rad = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  const vt = document.startViewTransition(() => setTheme(t));
+  vt.ready.then(() => document.documentElement.animate({clipPath:[`circle(0px at ${x}px ${y}px)`, `circle(${rad}px at ${x}px ${y}px)`]},
+    {duration:620, easing:'cubic-bezier(.22,1,.36,1)', pseudoElement:'::view-transition-new(root)'})).catch(() => {});
+}
+const quickTheme = () => themeReveal(isDarkTheme() ? 'light' : 'dark');
+$('#quickToggle').onclick = () => { openMenu(false); quickTheme(); };
+menu.addEventListener('keydown', e => {
+  const items = [...menu.querySelectorAll('button')], i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown'){ e.preventDefault(); items[(i + 1) % items.length].focus(); }
+  if (e.key === 'ArrowUp'){ e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+});
+document.addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target) && e.target !== themeBtn) openMenu(false); });
+
+/* ============================================================
+   Your location: blue dot, accuracy circle, heading beam
+   ============================================================ */
+let meMarker = null, watchId = null, firstFix = true, compassOn = false, locWarned = false;
+const meEl = document.createElement('div'); meEl.className = 'me'; meEl.innerHTML = '<div class="halo"></div><div class="cone"></div><div class="dot"></div>';
+function setLoc(s){ state.locState = s; $('#locBtn').dataset.state = s; }
+function autoLocate(){
+  if (!('geolocation' in navigator)) return;
+  if (navigator.permissions && navigator.permissions.query){
+    navigator.permissions.query({name:'geolocation'}).then(p => { if (p.state !== 'denied') locate(true); else toast('Location is off, so the map starts at Chandni Chowk.'); }).catch(() => locate(true));
+  } else locate(true);
+}
+function locate(auto){
+  if (!('geolocation' in navigator)) return toast('Location isn’t available in this browser.');
+  if (watchId !== null && !state.me){ navigator.geolocation.clearWatch(watchId); watchId = null; }   /* no fix yet: start a fresh request */
+  if (watchId !== null){
+    state.follow = true; setLoc(state.me ? 'follow' : 'searching');
+    if (state.me) map.easeTo({center:[state.me.lng, state.me.lat], zoom:Math.max(map.getZoom(), 16), padding:camPad(), duration:700});
+    return;
+  }
+  setLoc('searching'); state.follow = true; firstFix = true;
+  watchId = navigator.geolocation.watchPosition(onPos, err => {
+    if (err.code === 1){   /* permission denied: stop watching */
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      watchId = null; state.follow = false; setLoc(state.me ? 'on' : 'off');
+      return toast(auto ? 'Location is off, so the map starts at Chandni Chowk.' : 'Location is blocked. Allow it in your browser’s site settings.');
+    }
+    /* slow or lost GPS fix: keep watching, the next fix will come through */
+    if (!state.me){ setLoc('off'); if (!locWarned){ locWarned = true; toast('Couldn’t get your location yet. It will appear as soon as your device finds it.'); } }
+  }, {enableHighAccuracy:true, maximumAge:5000, timeout:30000});
+}
+function onPos(p){
+  const c = p.coords;
+  const gpsHeading = (c.heading != null && !isNaN(c.heading) && c.speed > 0.6) ? c.heading : null;
+  state.me = {lng:c.longitude, lat:c.latitude, acc:c.accuracy, heading: gpsHeading ?? (state.me && state.me.heading)};
+  if (!meMarker) meMarker = new maplibregl.Marker({element:meEl, rotationAlignment:'map', pitchAlignment:'map'}).setLngLat([c.longitude, c.latitude]).addTo(map);
+  else meMarker.setLngLat([c.longitude, c.latitude]);
+  if (state.me.heading != null){ meEl.classList.add('has-heading'); meMarker.setRotation(state.me.heading); }
+  const src = map.getSource('me-acc');
+  if (src) src.setData({type:'FeatureCollection', features:[{type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[circle(c.longitude, c.latitude, Math.min(c.accuracy || 0, 2000))]}}]});
+  if (state.follow) map.easeTo({center:[c.longitude, c.latitude], zoom: firstFix ? Math.max(map.getZoom(), 16) : map.getZoom(), padding:camPad(), duration: firstFix ? 900 : 500});
+  setLoc(state.follow ? 'follow' : 'on');
+  if (firstFix){ firstFix = false; maybeWeather(true); scheduleNearby(true); renderWhen(); }
+  else renderHero();
+  updateSunMarker();
+  if (state.walk) walkTick();
+}
+function enableCompass(){
+  if (compassOn) return; compassOn = true;
+  const handler = e => {
+    let h = null;
+    if (typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
+    else if (e.absolute && e.alpha != null) h = 360 - e.alpha;
+    if (h != null && meMarker){ if (state.me) state.me.heading = h; meEl.classList.add('has-heading'); meMarker.setRotation(h); }
+  };
+  try {
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function')
+      DeviceOrientationEvent.requestPermission().then(s => { if (s === 'granted') addEventListener('deviceorientation', handler); }).catch(() => {});
+    else if ('ondeviceorientationabsolute' in window) addEventListener('deviceorientationabsolute', handler);
+    else addEventListener('deviceorientation', handler);
+  } catch (e) {}
+}
+$('#locBtn').onclick = () => { enableCompass(); locate(false); };
+
+/* ============================================================
+   Weather pill (Open-Meteo)
+   ============================================================ */
+let wxAt = null, wxKey = '', wxData = null, wxTime = 0;
+const WX_VARS = 'temperature_2m,apparent_temperature,uv_index,is_day,weather_code,cloud_cover';
+const pickWx = (c, aqi, forecast) => ({t:Math.round(c.temperature_2m), feels:Math.round(c.apparent_temperature), uv:Math.round(c.uv_index ?? 0), day:c.is_day,
+  code:c.weather_code, cloud:c.cloud_cover ?? 0, aqi: aqi != null ? Math.round(aqi) : null, forecast});
+function maybeWeather(force){
+  const o = origin(), t = nowT(), key = state.when ? 'plan ' + ymd(t) + ' ' + t.getHours() : 'live';
+  if (!force && wxAt && dist(o, wxAt) < 3000 && key === wxKey && (key !== 'live' || Date.now() - wxTime < 600000)) return;
+  wxAt = o; wxKey = key; wxTime = Date.now();
+  const q = `latitude=${o.lat.toFixed(3)}&longitude=${o.lng.toFixed(3)}&timezone=auto`;
+  const done = d => { if (key !== wxKey) return; wxData = d; renderHero(); if (state.view === 'routes') renderRouteList(); };
+  if (!state.when){
+    Promise.allSettled([fetch(`${METEO}?${q}&current=${WX_VARS}`).then(r => r.json()), fetch(`${AIR}?${q}&current=us_aqi`).then(r => r.json())]).then(([w, a]) => {
+      const c = w.status === 'fulfilled' && w.value && w.value.current;
+      done(c ? pickWx(c, a.status === 'fulfilled' && a.value && a.value.current ? a.value.current.us_aqi : null, false) : null);
+    });
+  } else {
+    fetch(`${METEO}?${q}&hourly=${WX_VARS}&start_date=${ymd(t)}&end_date=${ymd(t)}`).then(r => r.json()).then(j => {
+      const h = j && j.hourly, i = h && h.time ? h.time.findIndex(x => +x.slice(11, 13) === t.getHours()) : -1;
+      done(i >= 0 ? pickWx(Object.fromEntries(Object.keys(h).map(k => [k, h[k][i]])), null, true) : {none:true});
+    }).catch(() => done({none:true}));
+  }
+}
+function wxHTML(){
+  if (!wxData) return `<div class="wx" title="Weather"><span class="wx-t">—°</span><span class="wx-m">Weather</span></div>`;
+  if (wxData.none) return `<div class="wx" title="Forecasts reach about 16 days ahead"><span class="wx-t">—°</span><span class="wx-m">No forecast</span></div>`;
+  const icon = wxData.code >= 3 || wxData.cloud >= 70 ? 'cloud' : (wxData.day ? 'sun' : 'moon');
+  const uvC = wxData.uv >= 8 ? '#D93025' : wxData.uv >= 6 ? '#E8710A' : wxData.uv >= 3 ? '#C9A100' : 'var(--green)';
+  return `<div class="wx" title="Feels like ${wxData.feels}° · ${wxData.cloud}% cloud"><span class="wx-t num">${svgI(icon)}${wxData.t}°</span>
+    <span class="wx-m num"><span>UV <i style="color:${uvC}">${wxData.uv}</i></span>${wxData.aqi != null ? `<span>AQI <i>${wxData.aqi}</i></span>` : wxData.forecast ? '<span>Forecast</span>' : ''}</span></div>`;
+}
+function adviceText(){
+  if (isNight() || !wxData || wxData.none) return '';
+  if (wxData.cloud >= 85) return 'Overcast, so shade matters less right now.';
+  if (wxData.feels >= 38) return `Feels like ${wxData.feels}°. Take the coolest route and carry water.`;
+  if (wxData.uv >= 8) return 'Very high UV. Stay in the shade where you can.';
+  if (wxData.cloud <= 30 && wxData.uv >= 3) return 'Clear and sunny, so shade makes a real difference.';
+  return '';
+}
+
+/* ============================================================
+   Nearby places, read from the map tiles already loaded
+   ============================================================ */
+let nearby = [], lastNear = null, nearPending = false;
+function scheduleNearby(force){
+  if (!mapReady || nearPending) return;
+  nearPending = true;
+  const run = () => {
+    nearPending = false;
+    const o = origin();
+    if (!force && lastNear && dist(o, lastNear) < 150 && nearby.length) { renderHero(); return; }
+    lastNear = o; computeNearby();
+    if (state.view === 'explore') renderExplore(); else renderHero();
+  };
+  if (map.areTilesLoaded() && !map.isMoving()) run(); else map.once('idle', run);
+}
+let regionTotals = {}, regionLimit = 50, regionSeq2 = 0;
+async function fetchRegionNearby(){
+  const o = origin(), cats = state.cat ? [state.cat] : ['park','cafe','food','transit'], seq = ++regionSeq2;
+  try {
+    const r = await fetch(`${API}/api/region/nearby?lat=${o.lat}&lon=${o.lng}&cats=${cats.join(',')}&limit=${state.cat ? regionLimit : 4}`);
+    if (!r.ok || seq !== regionSeq2) return;
+    const j = await r.json(); if (seq !== regionSeq2) return;
+    regionTotals = {}; const out = [];
+    for (const [k, v] of Object.entries(j)){
+      regionTotals[k] = v.total;
+      for (const p of v.items) out.push({name:p.name, lng:p.lon, lat:p.lat, cls:p.class, cat:k, d:p.dist_m,
+        kind: p.class === 'metro' ? 'Metro station' : p.class === 'station' ? 'Station' : prettySub(p.class)});
+    }
+    nearby = out;
+    if (mapReady && map.getSource('region-poi')) map.getSource('region-poi').setData(state.cat ? {type:'FeatureCollection',
+      features: out.map(p => ({type:'Feature', properties:{name:p.name, cat:p.cat, cls:p.cls}, geometry:{type:'Point', coordinates:[p.lng, p.lat]}}))} : EMPTY);
+    if (state.view === 'explore') renderExplore(); else renderHero();
+  } catch (e) {}
+}
+function computeNearby(){
+  if (REGION) return fetchRegionNearby();
+  if (!mapReady) return;
+  const o = origin(), seen = new Set(), out = [];
+  let feats = [];
+  try { feats = map.querySourceFeatures('omt', {sourceLayer:'poi', filter:['all', ['has','name'], classFilter(ALL_CLASSES)]}); } catch (e) {}
+  for (const f of feats){
+    if (f.properties.class === 'railway' && !STATION_SUBS.includes(f.properties.subclass)) continue;
+    const p = featToPlace(f); if (!p || !p.name) continue;
+    const key = p.name + '|' + p.lng.toFixed(4) + '|' + p.lat.toFixed(4); if (seen.has(key)) continue; seen.add(key);
+    p.d = dist(o, p); if (p.d > 4000) continue; out.push(p);
+  }
+  nearby = out.sort((a, b) => a.d - b.d);
+}
+function featToPlace(f){
+  const pr = f.properties || {}, g = f.geometry; if (!g || g.type !== 'Point') return null;
+  const [lng, lat] = g.coordinates, name = pr.name_en || pr['name:latin'] || pr.name;
+  return {id:f.id, name, cls:pr.class, sub:pr.subclass, cat:CLASS_TO_CAT[pr.class] || null, lng, lat,
+    kind: pr.class === 'railway' ? (/metro/i.test(name || '') || pr.subclass === 'subway' ? 'Metro station' : 'Station') : prettySub(pr.subclass || pr.class)};
+}
+
+/* ============================================================
+   Views
+   ============================================================ */
+const VIEWS = ['explore','place','routes','planner'];
+function setView(v, opts = {}){
+  const prev = state.view;
+  state.view = v; state.tab = v === 'place' ? 'explore' : v;
+  for (const x of VIEWS) $('#v-' + x).hidden = x !== v;
+  $$('[data-tab]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === state.tab));
+  moveIndicators();
+  if (prev !== v) playIn($('#v-' + v), v === 'place' ? 'anim-push' : prev === 'place' ? 'anim-pop' : 'anim-in');
+  if (v === 'explore') renderExplore();
+  if (v === 'routes') renderRoutes();
+  if (v === 'planner'){ renderPlanner(); if (REGION) loadPlanner(); }
+  else plannerHighlight(null);
+  if (v !== 'place'){ if (placeMarker){ placeMarker.remove(); placeMarker = null; } if (v !== 'routes') state.place = null; }
+  applyDayNight(); updateShadePaint(); syncRouteVisibility(); renderWhen(); updateSunMarker();
+  if (opts.sheet) setSheet(opts.sheet);
+  $('#panelBody').scrollTop = 0;
+}
+$$('[data-tab]').forEach(b => b.onclick = () => {
+  const t = b.dataset.tab;
+  if (t === 'routes' && !state.trip) loadSampleTrip();
+  if (t === 'planner' && state.view !== 'planner'){
+    const ln = AREAS.find(a => a.key === 'lajpat_nagar');
+    if (ln && map){ state.follow = false; if (state.me) setLoc('on'); map.flyTo({center:[ln.lng, ln.lat], zoom:15.3, padding:camPad(), duration:1200}); }
+  }
+  setView(t, {sheet: isPhone() && state.sheet === 'peek' ? 'half' : null});
+});
+
+function catRow(p, i){
+  const c = CATS[p.cat] || {color:'#7A7F87', glyph:'pin'};
+  return `<button class="item" data-place="${i}"><span class="pico" style="background:${c.color}">${svgI(c.glyph)}</span>
+    <span class="tx"><span class="t">${esc(p.name)}</span><span class="s">${esc(p.kind)}</span></span>
+    <span class="r num">${fmtDist(p.d)}<br>${walkMin(p.d)} min</span></button>`;
+}
+function nextRise(t, o){ const st = sunTimes(t, o.lat, o.lng); if (t < st.rise) return st.rise; const n = new Date(t); n.setDate(n.getDate() + 1); return sunTimes(n, o.lat, o.lng).rise; }
+function heroHTML(){
+  const o = origin(), a = areaAt(o), n = nearestArea(o), t = nowT(), plan = !!state.when, night = sunPos(t, o.lat, o.lng).alt < -0.833;
+  let title, sub, extra = '';
+  if (night){
+    const rise = nextRise(t, o), jump = new Date(rise); jump.setHours(9, 0, 0, 0);
+    title = plan ? `Night · ${fmtWhen(t)}` : 'The sun is down';
+    sub = `<span class="sdot"></span>Normal map until sunrise at ${fmtTime(rise)}`;
+    extra = `<div class="night-card">${svgI('moon')}<span>Shade only matters in daylight.</span><button data-jump="${jump.getTime()}">See ${fmtDay(jump)} 9 AM</button></div>`;
+  } else {
+    title = plan ? `Shade · ${fmtWhen(t)}` : (state.me ? 'Shade near you' : 'Shade around here');
+    sub = a ? `<span class="sdot on"></span>Inside the ${esc(a.name)} shade area` : `<span class="sdot"></span>No shade data here · ${esc(n.a.name)} is ${fmtDist(n.d)} away`;
+    const adv = adviceText(); if (adv) extra = `<div class="advice">${svgI('sun')}<span>${esc(adv)}</span></div>`;
+  }
+  return `<div id="hero"><div class="hero"><div class="tx"><h2>${title}</h2><p>${sub}</p></div>${wxHTML()}</div>${extra}</div>`;
+}
+function renderHero(){ const h = $('#hero'); if (h) h.outerHTML = heroHTML(); }
+const attrHTML = () => `<div class="attr">${REGION ? `Shade from saved data (built ${esc(REGION.built || '')})${REGION.basemap ? ', works offline' : ''}.` : 'Design preview: shade values are sample data.'} Map © OpenFreeMap © OpenMapTiles © OpenStreetMap contributors.</div>`;
+
+function renderExplore(){
+  const el = $('#v-explore');
+  const o = origin(), list = [];
+  const rows = arr => arr.map(p => { list.push(p); return catRow(p, list.length - 1); }).join('');
+  let html = heroHTML();
+  if (state.cat){
+    const c = CATS[state.cat], items = nearby.filter(p => p.cat === state.cat).slice(0, REGION ? regionLimit : 30), total = regionTotals[state.cat];
+    html += `<div class="sec"><span>${esc(c.label)} nearby</span><span class="meta num">${REGION && total != null ? total.toLocaleString('en-IN') + ' in saved area' : items.length ? items.length + ' found' : ''}</span></div>`;
+    html += items.length ? `<div class="group">${rows(items)}</div>`
+      : `<div class="group"><div class="empty-note">${REGION ? `No ${esc(c.label.toLowerCase())} saved in this area.` : `No ${esc(c.label.toLowerCase())} on this part of the map yet. Zoom out or move the map.`}</div></div>`;
+    if (REGION && total > items.length) html += `<button class="btn ghost" id="moreNear" style="width:100%;margin-top:8px">Show ${Math.min(50, total - items.length)} more</button>`;
+  } else {
+    const areas = isNight() ? [] : AREAS.map(a => ({...a, d: Math.max(0, dist(o, a) - a.r)})).sort((x, y) => x.d - y.d);
+    if (areas.length) html += `<div class="sec"><span>Shade data areas</span><span class="meta">${AREAS.length} built</span></div><div class="group">` +
+      areas.map(a => `<button class="item" data-area="${a.key}"><span class="pico" style="background:var(--green)">${svgI('leaf')}</span>
+        <span class="tx"><span class="t">${esc(a.name)}</span><span class="s">${a.d < 1 ? 'You’re inside this area' : fmtDist(a.d) + ' away'}</span></span>
+        <svg class="i chev" viewBox="0 0 24 24"><path d="${G.chev}"/></svg></button>`).join('') + `</div>`;
+    const sections = [['park','Parks & gardens',4], ['cafe','Cafés',3], ['food','Restaurants',3], ['transit','Metro & rail',3]];
+    let any = false;
+    for (const [k, title, n] of sections){
+      const items = nearby.filter(p => p.cat === k).slice(0, n); if (!items.length) continue; any = true;
+      html += `<div class="sec"><span>${title} nearby</span><button class="link" data-more="${k}">See all</button></div><div class="group">${rows(items)}</div>`;
+    }
+    if (!any) html += `<p class="note">Zoom in on a neighbourhood to see parks, cafés, restaurants and metro stations around you.</p>`;
+  }
+  el.innerHTML = html + attrHTML();
+  el.querySelectorAll('[data-place]').forEach(b => b.onclick = () => openPlace(list[+b.dataset.place]));
+  el.querySelectorAll('[data-more]').forEach(b => b.onclick = () => setCat(b.dataset.more));
+  const more = $('#moreNear'); if (more) more.onclick = () => { regionLimit += 50; more.textContent = 'Loading…'; fetchRegionNearby(); };
+  el.querySelectorAll('[data-area]').forEach(b => b.onclick = () => {
+    const a = AREAS.find(x => x.key === b.dataset.area); state.follow = false; if (state.me) setLoc('on');
+    map.flyTo({center:[a.lng, a.lat], zoom:15.4, padding:camPad(), duration:1300});
+  });
+}
+
+/* ---------- place card ---------- */
+let placeMarker = null;
+function pinEl(cls = ''){ const d = document.createElement('div'); d.className = 'pin ' + cls; d.innerHTML = '<div class="head"></div>'; return d; }
+function openPlace(p){
+  if (!p) return;
+  state.place = p;
+  if (placeMarker) placeMarker.remove();
+  placeMarker = new maplibregl.Marker({element:pinEl('mk-in'), anchor:'bottom'}).setLngLat([p.lng, p.lat]).addTo(map);
+  state.follow = false; if (state.me) setLoc('on');
+  setView('place', {sheet: isPhone() ? 'half' : null});
+  renderPlace();
+  map.easeTo({center:[p.lng, p.lat], zoom:Math.max(map.getZoom(), 16), padding:camPad(), duration:700});
+}
+function renderPlace(){
+  const p = state.place; if (!p) return;
+  p.d = dist(origin(), p);
+  const c = CATS[p.cat] || {color:'#7A7F87', glyph:'pin', one:'Place'}, a = areaAt(p), n = nearestArea(p);
+  $('#v-place').innerHTML = `
+    <button class="back" id="pBack">${svgI('back')} Explore</button>
+    <div class="place-head"><span class="pico" style="background:${c.color}">${svgI(c.glyph)}</span>
+      <div><h2>${esc(p.name)}</h2><p>${esc(p.kind || c.one)}${p.addr ? ' · ' + esc(p.addr) : ''}</p></div></div>
+    <div class="facts">
+      <div class="fact"><b class="num">${fmtDist(p.d)}</b><span>${state.me ? 'from you' : 'from map centre'}</span></div>
+      <div class="fact"><b class="num">${walkMin(p.d)} min</b><span>walk, approx.</span></div>
+      <div class="fact"><b style="color:${a ? 'var(--green-ink)' : 'var(--label2)'}">${a ? 'Yes' : 'Not yet'}</b><span>shade data</span></div>
+    </div>
+    <div class="actions"><button class="btn primary" id="pDir">${svgI('dir')} Directions</button><button class="btn" id="pShare">${svgI('share')} Copy link</button></div>
+    ${a ? '' : `<p class="note">Shade routing works inside built areas. This place is ${fmtDist(n.d)} from ${esc(n.a.name)}.</p>`}
+    ${attrHTML()}`;
+  $('#pBack').onclick = closePlace;
+  $('#pDir').onclick = () => directionsTo(p);
+  $('#pShare').onclick = () => {
+    const url = `https://www.openstreetmap.org/?mlat=${p.lat.toFixed(6)}&mlon=${p.lng.toFixed(6)}#map=18/${p.lat.toFixed(5)}/${p.lng.toFixed(5)}`;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast('Link copied')).catch(() => toast(url));
+  };
+}
+function closePlace(){ if (placeMarker){ placeMarker.remove(); placeMarker = null; } state.place = null; setView('explore'); }
+function dropPin(ll){
+  const p = {name:'Dropped pin', lng:ll.lng, lat:ll.lat, cat:null, kind:`${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}`};
+  openPlace(p);
+  reverseName(ll).then(n => { if (n && state.place === p){ p.name = n.name; if (n.kind) p.kind = n.kind; renderPlace(); } });
+}
+async function reverseName(ll){
+  try {
+    const r = await fetch(`${PHOTON}/reverse?lon=${ll.lng.toFixed(6)}&lat=${ll.lat.toFixed(6)}&lang=en`); const j = await r.json();
+    const f = j.features && j.features[0]; if (!f) return null; const pr = f.properties || {};
+    return {name: pr.name || [pr.street, pr.housenumber].filter(Boolean).join(' ') || pr.district || 'Dropped pin', kind: [pr.district || pr.locality, pr.city].filter(Boolean).join(', ')};
+  } catch (e) { return null; }
+}
+
+/* ============================================================
+   Category chips
+   ============================================================ */
+function renderChips(){
+  $('#chips').innerHTML = [`<button class="chip" id="askChip" style="--c:var(--blue)">${svgI('sparkle')}Ask</button>`]
+    .concat(CHIP_ORDER.map(k => `<button class="chip" data-cat="${k}" aria-pressed="${state.cat === k}" style="--c:${CATS[k].color}">${svgI(CATS[k].glyph)}${esc(CATS[k].label)}</button>`)).join('');
+  $$('#chips [data-cat]').forEach(b => b.onclick = () => setCat(state.cat === b.dataset.cat ? null : b.dataset.cat));
+  $('#askChip').onclick = openChat;
+}
+function setCat(k){
+  state.cat = k; renderChips();
+  if (REGION){ regionLimit = 50; fetchRegionNearby(); }
+  if (mapReady) for (const r of POI_RANKS){ map.setFilter(r.id, poiFilter(r)); map.setLayerZoomRange(r.id, k ? 13.5 : r.minzoom, 24); }
+  if (state.view !== 'explore') setView('explore'); else renderExplore();
+  if (isPhone() && k) setSheet('half');
+  if (k && mapReady && map.getZoom() < 14.5) map.easeTo({zoom:15, padding:camPad()});
+}
+
+/* ============================================================
+   Search: places on the map + Photon
+   ============================================================ */
+const qEl = $('#q'), resEl = $('#results');
+let qTimer = null, qSeq = 0, results = [], resIdx = -1;
+qEl.addEventListener('input', () => {
+  $('#qClear').hidden = !qEl.value; clearTimeout(qTimer);
+  const q = qEl.value.trim(); if (!q){ resEl.hidden = !state.pick; if (state.pick) paintResults(false); return; }
+  showLocal(q); qTimer = setTimeout(() => remoteSearch(q), 280);
+});
+qEl.addEventListener('keydown', e => {
+  if (resEl.hidden) return;
+  if (e.key === 'ArrowDown'){ e.preventDefault(); resIdx = Math.min(results.length - 1, resIdx + 1); paintResults(false); }
+  if (e.key === 'ArrowUp'){ e.preventDefault(); resIdx = Math.max(0, resIdx - 1); paintResults(false); }
+  if (e.key === 'Enter'){ e.preventDefault(); const r = results[resIdx >= 0 ? resIdx : 0]; if (r) chooseResult(r); }
+});
+qEl.addEventListener('focus', () => { if ((qEl.value.trim() && results.length) || state.pick){ if (!qEl.value.trim()) results = []; paintResults(false); } });
+$('#qClear').onclick = () => { qEl.value = ''; $('#qClear').hidden = true; resEl.hidden = true; results = []; if (state.pick) cancelPick(); qEl.focus(); };
+document.addEventListener('click', e => { if (!$('#search').contains(e.target)) resEl.hidden = true; });
+
+function showLocal(q){
+  const ql = q.toLowerCase();
+  results = nearby.filter(p => p.name.toLowerCase().includes(ql)).slice(0, 4);
+  resIdx = -1; paintResults(true);
+}
+async function remoteSearch(q){
+  const seq = ++qSeq, o = origin();
+  if (REGION){
+    try {
+      const r = await fetch(`${API}/api/region/places?q=${encodeURIComponent(q)}&lat=${o.lat}&lon=${o.lng}&limit=6`);
+      const j = await r.json(); if (seq !== qSeq) return;
+      const have = new Set(results.map(x => x.name.toLowerCase()));
+      results = results.concat(j.filter(p => !have.has(p.name.toLowerCase())).map(p => ({name:p.name, lng:p.lon, lat:p.lat,
+        cat: p.class === 'metro' ? 'transit' : (OSM_VALUE_TO_CAT[p.class] || null), kind: p.class === 'metro' ? 'Metro station' : prettySub(p.class), addr:'Saved offline'}))).slice(0, 8);
+      paintResults(true);
+    } catch (e) {}
+  }
+  try {
+    const r = await fetch(`${PHOTON}/api/?q=${encodeURIComponent(q)}&limit=7&lang=en&lat=${o.lat.toFixed(4)}&lon=${o.lng.toFixed(4)}`);
+    const j = await r.json(); if (seq !== qSeq) return;
+    const have = new Set(results.map(x => x.name.toLowerCase()));
+    const remote = (j.features || []).map(f => {
+      const pr = f.properties || {}, [lng, lat] = f.geometry.coordinates, v = pr.osm_value === 'yes' ? pr.osm_key : pr.osm_value;
+      return {name: pr.name || pr.street || 'Unnamed place', lng, lat, cat: OSM_VALUE_TO_CAT[pr.osm_value] || null, kind: prettySub(v),
+        addr: [pr.street, pr.district || pr.locality, pr.city].filter(Boolean).join(', ')};
+    }).filter(x => !have.has(x.name.toLowerCase()));
+    results = results.concat(remote).slice(0, 8); paintResults(false);
+  } catch (e){ if (seq === qSeq) paintResults(false, REGION && results.length ? '' : 'Search is offline right now.'); }
+}
+function paintResults(loading, err){
+  const o = origin();
+  resEl.hidden = false;
+  resEl.innerHTML = (state.pick ? `<div class="res-note">Choose ${state.pick === 'to' ? 'a destination' : 'a starting point'}: search, or tap the map.</div>` : '') +
+    results.map((r, i) => { const c = CATS[r.cat] || {color:'#7A7F87', glyph:'pin'};
+      return `<button class="res ${i === resIdx ? 'act' : ''}" data-i="${i}"><span class="pico" style="background:${c.color}">${svgI(c.glyph)}</span>
+        <span class="tx"><span class="t">${esc(r.name)}</span><span class="s">${esc([r.kind, r.addr].filter(Boolean).join(' · '))}</span></span>
+        <span class="d num">${fmtDist(dist(o, r))}</span></button>`; }).join('') +
+    (loading ? `<div class="res-note">Searching…</div>` : '') + (err ? `<div class="res-note">${esc(err)}</div>` : '') +
+    (!loading && !err && !results.length && qEl.value.trim() ? `<div class="res-note">No places found.</div>` : '');
+  resEl.querySelectorAll('[data-i]').forEach(b => b.onclick = () => chooseResult(results[+b.dataset.i]));
+}
+function chooseResult(r){
+  resEl.hidden = true; qEl.blur();
+  if (state.pick){ qEl.value = ''; $('#qClear').hidden = true; setTripEnd(state.pick, {name:r.name, lng:r.lng, lat:r.lat}); return; }
+  qEl.value = r.name; $('#qClear').hidden = false; openPlace({...r});
+}
+addEventListener('keydown', e => {
+  const typing = /input|textarea|select/i.test(document.activeElement.tagName);
+  if (e.key === '/' && !typing){ e.preventDefault(); qEl.focus(); }
+  if (e.key === 'Escape'){
+    if (!menu.hidden){ openMenu(false); themeBtn.focus(); }
+    else if (!$('#chat').hidden) closeChat();
+    else if (!resEl.hidden) resEl.hidden = true;
+    else if (state.pick) cancelPick();
+  }
+  if (e.shiftKey && (e.key === 'D' || e.key === 'd') && !typing) quickTheme();
+});
+
+/* ============================================================
+   Routes (walking geometry: FOSSGIS OSRM; shade %: sample)
+   ============================================================ */
+const SAMPLE = { from:{name:'Nai Sarak', lng:77.2266, lat:28.6527}, to:{name:'Lahori Gate, Red Fort', lng:77.2377, lat:28.6563},
+  via:{lng:77.2304, lat:28.6550} /* through the narrow Kinari Bazaar lane */ };
+const KIND_COLOR = {coolest:'var(--green)', fastest:'var(--orange)', alt:'var(--blue)'};
+const tagLabel = r => r.cool && r.fast ? 'Coolest · Fastest' : r.cool ? 'Coolest' : r.fast ? 'Fastest' : 'Alternative';
+/* Route shade (SAMPLE): length-weighted average of the coloured streets the route walks along, for the sun at the chosen time */
+const bearingAx = (p, q) => { let a = Math.atan2((q[0] - p[0])*Math.cos(p[1]*RADS), q[1] - p[1]); if (a < 0) a += Math.PI; return a % Math.PI; };
+const axDiff = (a, b) => { const d = Math.abs(a - b) % Math.PI; return Math.min(d, Math.PI - d); };
+function nearestSeg(pt, brg){
+  const cx = Math.floor(pt[0]*500), cy = Math.floor(pt[1]*500), kx = 111320*Math.cos(pt[1]*RADS), ky = 110540;
+  let best = null, bestD = 14;
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (const sg of (segGrid.get((cx + i) + ',' + (cy + j)) || [])){
+    const c = sg.geometry.coordinates;
+    for (let k = 1; k < c.length; k++){
+      const ax = (c[k-1][0] - pt[0])*kx, ay = (c[k-1][1] - pt[1])*ky, bx = (c[k][0] - pt[0])*kx, by = (c[k][1] - pt[1])*ky;
+      const dx = bx - ax, dy = by - ay, L2 = dx*dx + dy*dy, u = L2 ? clamp(-(ax*dx + ay*dy)/L2, 0, 1) : 0;
+      const d = Math.hypot(ax + dx*u, ay + dy*u) + (axDiff(sg.properties.brg, brg) > 0.6 ? 8 : 0);
+      if (d < bestD){ bestD = d; best = sg.properties; }
+    }
+  }
+  return best;
+}
+function routeShadeEst(r, sun){
+  const c = r.geometry.coordinates; let tot = 0, acc = 0;
+  for (let i = 1; i < c.length; i++){
+    const a = c[i-1], b = c[i], L = dist({lng:a[0], lat:a[1]}, {lng:b[0], lat:b[1]}); if (!L) continue;
+    const brg = bearingAx(a, b), n = Math.max(1, Math.round(L/20));
+    for (let k = 0; k < n; k++){
+      const f = (k + 0.5)/n, sg = nearestSeg([a[0] + (b[0] - a[0])*f, a[1] + (b[1] - a[1])*f], brg);
+      acc += (sg ? (sg.shade != null ? sg.shade : segShade(sg.b, sg.j, sg.brg, sun)) : REGION ? 0.3 : segShade(0.45, 0, brg, sun))*L/n; tot += L/n;
+    }
+  }
+  return tot ? Math.min(REGION ? 100 : 95, Math.round(acc/tot*(REGION ? 100 : 70))) : null;
+}
+function scoreTrip(t){
+  if (!t || !t.routes || !t.routes.length) return;
+  const o = t.to || t.from, sun = sunPos(nowT(), o.lat, o.lng);
+  t.night = sun.alt < -0.833;
+  for (const r of t.routes) r.shade = (t.noShade || t.night) ? null : (r.serverShade ?? routeShadeEst(r, sun));
+  const fast = t.routes.reduce((m, r) => r.duration < m.duration ? r : m);
+  const shaded = t.routes.filter(r => r.shade != null);
+  const cool = shaded.length > 1 ? shaded.reduce((m, r) => r.shade > m.shade ? r : m) : null;
+  for (const r of t.routes){ r.fast = r === fast; r.cool = r === cool; r.kind = r.cool ? 'coolest' : r.fast ? 'fastest' : 'alt'; }
+}
+const defaultSel = t => { const i = t.routes.findIndex(r => r.cool); return i >= 0 ? i : Math.max(0, t.routes.findIndex(r => r.fast)); };
+let routeMarkers = [], lastDrawnRoutes = null;
+/* ---------- motion helpers ---------- */
+var routeAnim = null, plHiStop = null, countMem = {};
+function motionOK(){ return !matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function shadeOp(){ const t = state.trip; return state.view === 'routes' && t && t.routes && t.routes.length ? 0.4 : 0.9; }   /* dim street colours under a route */
+function tween(ms, step, done){
+  if (!motionOK()){ step(1); if (done) done(); return () => {}; }
+  const t0 = performance.now(); let id = 0, stopped = false;
+  const f = now => { if (stopped) return; const x = Math.min(1, (now - t0)/ms), k = 1 - Math.pow(1 - x, 3);
+    step(k); if (x < 1) id = requestAnimationFrame(f); else if (done) done(); };
+  id = requestAnimationFrame(f); return () => { stopped = true; cancelAnimationFrame(id); };
+}
+function sliceLine(c, frac){
+  if (frac >= 1 || c.length < 2) return c;
+  const seg = []; let total = 0;
+  for (let i = 1; i < c.length; i++){ const d = Math.hypot((c[i][0] - c[i-1][0]) * Math.cos(c[i][1]*Math.PI/180), c[i][1] - c[i-1][1]); seg.push(d); total += d; }
+  const want = total * Math.max(0, frac), out = [c[0]]; let acc = 0;
+  for (let i = 0; i < seg.length; i++){
+    if (acc + seg[i] >= want){ const f = seg[i] ? (want - acc)/seg[i] : 1; out.push([c[i][0] + (c[i+1][0] - c[i][0])*f, c[i][1] + (c[i+1][1] - c[i][1])*f]); return out; }
+    out.push(c[i+1]); acc += seg[i];
+  }
+  return out;
+}
+function drawOn(fc, k){ return {type:'FeatureCollection', features: fc.features.map(f => f.geometry && f.geometry.type === 'LineString'
+  ? {...f, geometry:{type:'LineString', coordinates: sliceLine(f.geometry.coordinates, k)}} : f)}; }
+function countHTML(key, to, suffix = ''){ const from = !motionOK() ? to : key in countMem ? countMem[key] : 0;
+  return `<b class="num" data-count="${to}" data-key="${key}" data-suffix="${suffix}">${from}${suffix}</b>`; }
+function countUp(root){
+  root.querySelectorAll('[data-count]').forEach(el => {
+    const to = +el.dataset.count, key = el.dataset.key, suf = el.dataset.suffix || '', from = key in countMem ? countMem[key] : 0;
+    countMem[key] = to; if (from === to) return;
+    tween(700, k => { el.textContent = Math.round(from + (to - from)*k) + suf; });
+  });
+}
+function arrowImage(){                                         /* white chevron drawn along the chosen route */
+  const c = document.createElement('canvas'); c.width = c.height = 48; const g = c.getContext('2d');
+  g.strokeStyle = '#fff'; g.lineWidth = 7; g.lineCap = 'round'; g.lineJoin = 'round';
+  g.beginPath(); g.moveTo(17, 11); g.lineTo(31, 24); g.lineTo(17, 37); g.stroke();
+  return g.getImageData(0, 0, 48, 48);
+}
+const meAsPoint = () => state.me ? {name:'Your location', lng:state.me.lng, lat:state.me.lat, me:true} : null;
+
+async function regionRoute(a, b){
+  const r = await fetch(`${API}/api/region/route?from_lat=${a.lat}&from_lon=${a.lng}&to_lat=${b.lat}&to_lon=${b.lng}&when=${encodeURIComponent(whenISO(nowT()))}`);
+  const j = await r.json(); if (!r.ok) throw new Error(j.detail || 'route');
+  const mk = x => ({geometry:{type:'LineString', coordinates:x.coords}, distance:x.length_m, duration:x.length_m/1.3, serverShade:j.night ? null : x.shade_pct});
+  const out = [mk(j.fastest)];
+  if (j.shadiest.coords.length !== j.fastest.coords.length || j.shadiest.length_m !== j.fastest.length_m) out.push(mk(j.shadiest));
+  return out;
+}
+async function osrm(points, alternatives){
+  if (REGION && points.length >= 2 && areaAt(points[0]) && areaAt(points[points.length - 1])){
+    try { return await regionRoute(points[0], points[points.length - 1]); } catch (e) {}
+  }
+  const coords = points.map(p => `${p.lng.toFixed(6)},${p.lat.toFixed(6)}`).join(';');
+  const r = await fetch(`${OSRM}/${coords}?overview=full&geometries=geojson&steps=false&alternatives=${alternatives ? 'true' : 'false'}`);
+  if (!r.ok) throw new Error('route ' + r.status);
+  const j = await r.json(); if (j.code !== 'Ok' || !j.routes || !j.routes.length) throw new Error(j.code || 'no route');
+  return j.routes.map(x => ({geometry:x.geometry, distance:x.distance, duration:x.duration}));
+}
+async function loadSampleTrip(){
+  cancelPick();
+  const t = state.trip = {from:{...SAMPLE.from}, to:{...SAMPLE.to}, routes:[], sel:0, loading:true, sample:true};
+  renderRoutes(); drawTrip(); fitTrip();
+  try {
+    const [fast, cool] = await Promise.all([osrm([SAMPLE.from, SAMPLE.to], false), osrm([SAMPLE.from, SAMPLE.via, SAMPLE.to], false)]);
+    if (state.trip !== t) return;
+    t.routes = fast[0].serverShade !== undefined ? fast : [{...cool[0]}, {...fast[0]}]; scoreTrip(t); t.sel = defaultSel(t);
+  } catch (e){ if (state.trip !== t) return; t.error = 'Couldn’t reach the walking-route server. Check your connection and try again.'; }
+  t.loading = false; renderRoutes(); drawTrip(); fitTrip();
+}
+async function computeTrip(){
+  const t = state.trip; if (!t || !t.from || !t.to){ renderRoutes(); drawTrip(); return; }
+  t.loading = true; t.error = null; t.routes = []; t.sample = false; renderRoutes(); drawTrip(); fitTrip();
+  try {
+    const rs = await osrm([t.from, t.to], true); if (state.trip !== t) return;
+    t.noShade = !(areaAt(t.from) && areaAt(t.to)); t.userSel = false;
+    rs.sort((a, b) => a.duration - b.duration);
+    t.routes = rs.slice(0, 3); scoreTrip(t); t.sel = defaultSel(t);
+  } catch (e){ if (state.trip !== t) return; t.error = 'Couldn’t find a walking route between these points.'; }
+  t.loading = false; renderRoutes(); drawTrip(); fitTrip();
+}
+function directionsTo(p){
+  state.trip = {from:meAsPoint(), to:{name:p.name, lng:p.lng, lat:p.lat}, routes:[], sel:0};
+  setView('routes', {sheet: isPhone() ? 'half' : null});
+  if (!state.trip.from){ startPick('from'); toast('Choose a starting point: search, or tap the map.'); } else computeTrip();
+}
+function setTripEnd(which, pt){
+  if (!state.trip) state.trip = {from:null, to:null, routes:[], sel:0};
+  state.trip[which] = pt; state.trip.sample = false;
+  cancelPick();
+  if (state.view !== 'routes') setView('routes');
+  if (state.trip.from && state.trip.to) computeTrip();
+  else { startPick(state.trip.from ? 'to' : 'from'); drawTrip(); }
+}
+function startPick(which){
+  state.pick = which; $('#search').classList.add('picking');
+  qEl.placeholder = which === 'to' ? 'Choose destination…' : 'Choose starting point…';
+  if (state.view === 'routes') renderRoutes();
+}
+function cancelPick(){ state.pick = null; $('#search').classList.remove('picking'); qEl.placeholder = 'Search parks, cafés, metro…'; }
+async function pickPoint(ll){
+  const which = state.pick, pt = {name:'Point on map', lng:ll.lng, lat:ll.lat};
+  setTripEnd(which, pt);
+  const n = await reverseName(ll);
+  if (n && state.trip && state.trip[which] === pt){ pt.name = n.name; if (state.view === 'routes') renderRoutes(); }
+}
+function drawTrip(){
+  if (!mapReady) return;
+  const t = state.trip;
+  const fresh = !!(t && t.routes && t.routes.length && t.routes !== lastDrawnRoutes); lastDrawnRoutes = t && t.routes;
+  routeMarkers.forEach(m => m.remove()); routeMarkers = [];
+  const fc = !t ? EMPTY : {type:'FeatureCollection', features:(t.routes || []).map((r, i) => ({type:'Feature', properties:{i, kind:r.kind, sel: i === t.sel ? 1 : 0}, geometry:r.geometry}))};
+  if (fresh){                                                  /* new routes draw themselves from start to finish */
+    if (routeAnim) routeAnim.stop();
+    const a = routeAnim = {fc};
+    a.stop = tween(850, k => map.getSource('routes').setData(drawOn(a.fc, k)), () => { if (routeAnim === a) routeAnim = null; });
+  } else if (routeAnim && t) routeAnim.fc = fc;              /* still drawing: keep going with the new selection */
+  else { if (routeAnim){ routeAnim.stop(); routeAnim = null; } map.getSource('routes').setData(fc); }
+  if (t){
+    if (t.from && !t.from.me) routeMarkers.push(new maplibregl.Marker({element:pinEl('start'), anchor:'center'}).setLngLat([t.from.lng, t.from.lat]).addTo(map));
+    if (t.to) routeMarkers.push(new maplibregl.Marker({element:pinEl(), anchor:'bottom'}).setLngLat([t.to.lng, t.to.lat]).addTo(map));
+    (t.routes || []).forEach((r, i) => {
+      const sh = r.shade, el = document.createElement('div');
+      el.className = `callout k-${r.kind} ${i === t.sel ? 'on' : ''}`;
+      el.innerHTML = `<b class="num">${Math.max(1, Math.round(r.duration/60))} min</b>${sh != null ? `<span class="num">${sh}% shade</span>` : ''}`;
+      el.addEventListener('click', ev => { ev.stopPropagation(); t.sel = i; t.userSel = true; renderRouteList(); drawTrip(); renderWalkBar(); });
+      routeMarkers.push(new maplibregl.Marker({element:el, anchor:'bottom'}).setLngLat(alongMid(r.geometry.coordinates, [0.5, 0.3, 0.7][i] || 0.5)).addTo(map));
+    });
+  }
+  if (fresh) routeMarkers.forEach((m, i) => { const e = m.getElement(); e.style.animationDelay = (motionOK() ? 380 + i*80 : 0) + 'ms'; e.classList.add('mk-in'); });
+  syncRouteVisibility();
+}
+function alongMid(c, frac = 0.5){
+  if (c.length < 2) return c[0];
+  const seg = []; let total = 0;
+  for (let i = 1; i < c.length; i++){ const d = dist({lng:c[i-1][0], lat:c[i-1][1]}, {lng:c[i][0], lat:c[i][1]}); seg.push(d); total += d; }
+  let acc = 0; const half = total * frac;
+  for (let i = 0; i < seg.length; i++){ if (acc + seg[i] >= half){ const f = (half - acc) / (seg[i] || 1); return [c[i][0] + (c[i+1][0] - c[i][0])*f, c[i][1] + (c[i+1][1] - c[i][1])*f]; } acc += seg[i]; }
+  return c[c.length - 1];
+}
+function fitTrip(){
+  const t = state.trip; if (!t || !mapReady) return;
+  const pts = []; (t.routes || []).forEach(r => pts.push(...r.geometry.coordinates));
+  if (t.from) pts.push([t.from.lng, t.from.lat]); if (t.to) pts.push([t.to.lng, t.to.lat]);
+  if (pts.length < 2) return;
+  const b = pts.reduce((b, p) => b.extend(p), new maplibregl.LngLatBounds(pts[0], pts[0]));
+  state.follow = false; if (state.me) setLoc('on');
+  map.fitBounds(b, {padding:camPad(), maxZoom:17, duration:900});
+}
+function syncRouteVisibility(){
+  const show = state.view === 'routes';
+  if (mapReady){
+    for (const id of ['rt-shadow','rt-case','rt-line','rt-arrow']) if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', show ? 'visible' : 'none');
+    if (map.getLayer('shade-sample') && map.getPaintProperty('shade-sample', 'line-opacity') > 0) map.setPaintProperty('shade-sample', 'line-opacity', shadeOp());
+  }
+  routeMarkers.forEach(m => { m.getElement().style.display = show ? '' : 'none'; });
+}
+/* ============================================================
+   Time: Now (live) or Plan ahead
+   ============================================================ */
+function quickTimes(){
+  const now = new Date(), at = (dd, h) => { const d = new Date(now); d.setDate(d.getDate() + dd); d.setHours(h, 0, 0, 0); return d; };
+  const toSat = (6 - now.getDay() + 7) % 7 || 7;
+  return [{label:'In 1 hr', d:roundTo15(new Date(now.getTime() + 3600e3))}, {label:'Tomorrow 9 AM', d:at(1, 9)},
+    {label:'Tomorrow 5 PM', d:at(1, 17)}, {label:'Saturday 10 AM', d:at(toSat, 10)}];
+}
+function renderWhen(){
+  const el = $('#when'), panel = $('#whenPanel'); if (!el) return;
+  if (state.view === 'planner' && !REGION){ panel.hidden = true;
+    el.innerHTML = `<div class="when"><div class="when-note">${svgI('sun')}<span>Planner shows ${fmtDay(nowT())} at 2:00 PM, the hottest part of the day.</span></div></div>`; return; }
+  const t = nowT(), o = origin(), sun = sunPos(t, o.lat, o.lng), st = sunTimes(t, o.lat, o.lng), night = sun.alt < -0.833;
+  el.innerHTML = `<div class="when"><button class="when-btn" id="whenBtn" aria-expanded="${!panel.hidden}" aria-controls="whenPanel">
+      ${state.when ? `<span class="cal">${svgI('cal')}</span>` : '<span class="live-dot" title="Live"></span>'}
+      <span class="wt num">${state.when ? `<b>${fmtWhen(t)}</b>` : `<b>Now</b> · ${fmtTime(t)}`}</span><svg class="i chev" viewBox="0 0 24 24"><path d="${G.chev}"/></svg></button>
+    <span class="sun-pill num ${night ? 'night' : ''}" title="${night ? 'The sun is below the horizon' : `The sun is ${Math.round(sun.alt)}° high in the ${compass(sun.az)}`}">${night ? svgI('moon') + 'Rises ' + fmtTime(nextRise(t, o)) : svgI('sun') + Math.round(sun.alt) + '° · sets ' + fmtTime(st.set)}</span></div>`;
+  $('#whenBtn').onclick = () => { if (panel.hidden){ panel.hidden = false; renderWhenPanel(); renderWhen(); } else closeAnimated(panel, renderWhen); };
+}
+function renderWhenPanel(){
+  const el = $('#whenPanel'); if (el.hidden) return;
+  const t = nowT(), o = origin(), st = sunTimes(t, o.lat, o.lng), plan = !!state.when;
+  const pct = d => ((d.getHours()*60 + d.getMinutes())/14.4).toFixed(1) + '%';
+  const track = `linear-gradient(to right,#2D3754 0 ${pct(st.rise)},#F4C04E ${pct(st.rise)} ${pct(st.set)},#2D3754 ${pct(st.set)} 100%)`;
+  el.innerHTML = `<div class="seg2" role="group" aria-label="Time"><span class="seg-thumb" style="--i:${seg2Prev}"></span><button data-mode="now" aria-pressed="${!plan}">Now</button><button data-mode="plan" aria-pressed="${plan}">Plan ahead</button></div>
+    ${plan ? `<div class="wp-date"><input type="date" id="wDate" value="${ymd(t)}" aria-label="Date"></div>
+      <div class="tl-top"><span class="num">Sunrise ${fmtTime(st.rise)} · Sunset ${fmtTime(st.set)}</span><b class="num" id="wTime">${fmtTime(t)}</b></div>
+      <input type="range" class="tl" id="wSlider" min="0" max="95" step="1" value="${Math.round((t.getHours()*60 + t.getMinutes())/15) % 96}" style="--track:${track}" aria-label="Time of day">
+      <div class="tl-ticks"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div>`
+    : `<p class="note" style="padding:0">Live: shade, routes and weather follow the clock and refresh every minute.</p>`}
+    <div class="qc">${quickTimes().map((q, i) => `<button data-q="${i}">${q.label}</button>`).join('')}</div>`;
+  requestAnimationFrame(() => { const th = el.querySelector('.seg2 .seg-thumb'); if (th) th.style.setProperty('--i', plan ? 1 : 0); }); seg2Prev = plan ? 1 : 0;
+  el.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => setWhen(b.dataset.mode === 'now' ? null : (state.when ? new Date(state.when) : roundTo15(new Date(Date.now() + 3600e3)))));
+  const dIn = $('#wDate'), sl = $('#wSlider');
+  if (dIn) dIn.onchange = () => { if (!dIn.value) return; const [y, m, d] = dIn.value.split('-').map(Number), n = nowT(); n.setFullYear(y, m - 1, d); setWhen(n); };
+  if (sl){
+    sl.oninput = () => { const n = nowT(); n.setHours(0, +sl.value*15, 0, 0); state.when = n.getTime(); $('#wTime').textContent = fmtTime(n); timeChanged(false); };
+    sl.onchange = () => timeChanged(true);
+  }
+  el.querySelectorAll('[data-q]').forEach(b => b.onclick = () => setWhen(quickTimes()[+b.dataset.q].d));
+}
+function setWhen(d){
+  state.when = d ? d.valueOf() : null;
+  if (state.walk && state.when) endWalk();
+  renderWhenPanel(); timeChanged(true);
+}
+/* Night = normal map: no shade colours, no shade-area circles, plain walking routes */
+function applyDayNight(){
+  const night = isNight();
+  for (const id of ['area-fill','area-line','area-label']) fadeLayer(id, !night);
+  applyShadeVisibility();
+}
+/* Routes from the saved data depend on the hour (shade changes), so a new time asks the server again */
+let tripRefT = null, tripRefSeq = 0;
+function refetchTripSoon(){ clearTimeout(tripRefT); tripRefT = setTimeout(refetchTrip, 250); }
+async function refetchTrip(){
+  const t = state.trip;
+  if (!t || !t.from || !t.to || t.loading || t.sample || state.walk || !REGION || !areaAt(t.from) || !areaAt(t.to)) return;
+  const seq = ++tripRefSeq;
+  try {
+    const rs = await osrm([t.from, t.to], true); if (state.trip !== t || seq !== tripRefSeq) return;
+    rs.sort((a, b) => a.duration - b.duration);
+    t.routes = rs.slice(0, 3); t.userSel = false; scoreTrip(t); t.sel = defaultSel(t);
+    if (state.view === 'routes'){ renderRoutes(); drawTrip(); }
+  } catch (e) {}
+}
+function timeChanged(full){
+  applyDayNight(); updateShadePaint(); updateSunMarker(); renderWhen();
+  if (full) refetchTripSoon();
+  const t = state.trip;
+  if (t && t.routes && t.routes.length){ scoreTrip(t); if (!t.userSel) t.sel = defaultSel(t); if (state.view === 'routes'){ renderRouteList(); drawTrip(); } }
+  if (state.view === 'planner' && REGION) loadPlannerSoon();
+  if (full){ maybeWeather(); if (state.view === 'explore') renderExplore(); else renderHero(); }
+  else renderHero();
+}
+$('#panelBody').addEventListener('click', e => {
+  const b = e.target.closest('[data-jump]'); if (!b) return;
+  e.preventDefault(); $('#whenPanel').hidden = false; setWhen(new Date(+b.dataset.jump));
+});
+
+/* ---------- sun direction marker ---------- */
+let sunMarker = null;
+const sunEl = document.createElement('div'); sunEl.className = 'sunmk'; sunEl.innerHTML = '<div class="ray"></div><div class="disc"></div><div class="shadow"></div>';
+function updateSunMarker(){
+  if (!mapReady) return;
+  const sn = sunNow(), at = state.me ? [state.me.lng, state.me.lat] : map.getCenter().toArray();
+  if (!sunMarker) sunMarker = new maplibregl.Marker({element:sunEl, rotationAlignment:'map', pitchAlignment:'map'}).setLngLat(at).addTo(map);
+  sunMarker.setLngLat(at); sunMarker.setRotation(sn.az);
+  sunEl.style.display = sn.alt > -0.833 && state.view !== 'planner' ? '' : 'none';
+  sunEl.querySelector('.shadow').style.height = clamp(14/Math.tan(Math.max(sn.alt, 2)*RADS), 6, 60) + 'px';
+}
+
+/* ============================================================
+   Walking mode + live rerouting
+   ============================================================ */
+function projectOnRoute(p, c){
+  const kx = 111320*Math.cos(p.lat*RADS), ky = 110540; let best = Infinity, along = 0, run = 0;
+  for (let k = 1; k < c.length; k++){
+    const ax = (c[k-1][0] - p.lng)*kx, ay = (c[k-1][1] - p.lat)*ky, bx = (c[k][0] - p.lng)*kx, by = (c[k][1] - p.lat)*ky;
+    const dx = bx - ax, dy = by - ay, L2 = dx*dx + dy*dy, L = Math.sqrt(L2), u = L2 ? clamp(-(ax*dx + ay*dy)/L2, 0, 1) : 0, d = Math.hypot(ax + dx*u, ay + dy*u);
+    if (d < best){ best = d; along = run + L*u; }
+    run += L;
+  }
+  return {off: best, along, total: run};
+}
+function sliceRoute(r, along){
+  const c = r.geometry.coordinates, kx = 111320*Math.cos(c[0][1]*RADS), out = []; let run = 0;
+  for (let k = 1; k < c.length; k++){
+    const L = Math.hypot((c[k][0] - c[k-1][0])*kx, (c[k][1] - c[k-1][1])*110540);
+    if (run + L >= along){ if (!out.length){ const f = L ? (along - run)/L : 0; out.push([c[k-1][0] + (c[k][0] - c[k-1][0])*f, c[k-1][1] + (c[k][1] - c[k-1][1])*f]); } out.push(c[k]); }
+    run += L;
+  }
+  return out.length > 1 ? {geometry:{type:'LineString', coordinates:out}} : null;
+}
+function startWalk(){
+  const t = state.trip; if (!t || !t.routes.length || !t.from || !t.from.me) return;
+  if (state.when) setWhen(null);
+  state.walk = {lastCheck: Date.now(), busy:false, offer:null, remain:t.routes[t.sel].distance};
+  state.follow = true; setLoc('follow');
+  if (state.me) map.easeTo({center:[state.me.lng, state.me.lat], zoom:Math.max(map.getZoom(), 17), padding:camPad(), duration:800});
+  if (isPhone()) setSheet('peek');
+  renderWalkBar(); renderRouteList();
+}
+function endWalk(msg){ state.walk = null; renderWalkBar(); if (state.view === 'routes') renderRouteList(); if (msg) toast(msg); }
+function renderWalkBar(){
+  const el = $('#walkBar'), w = state.walk, t = state.trip;
+  if (!w || !t || !t.routes.length){ el.innerHTML = ''; return; }
+  const r = t.routes[t.sel], left = w.remain ?? r.distance, wasEmpty = !el.innerHTML.trim();
+  el.innerHTML = `<div class="walk">${svgI('walk')}<div class="tx"><b>Walking to ${esc(t.to.name)}</b>
+      <span class="num">${fmtDist(left)} · about ${walkMin(left)} min left${r.shade != null ? ` · ${r.shade}% shade` : ''}</span></div><button id="endWalk">End</button></div>
+    ${w.offer ? `<div class="reroute">${svgI('leaf')}<span>Cooler way from here: <b>+${w.offer.gain}% shade</b>${w.offer.extra > 0 ? `, +${w.offer.extra} min` : ', same time'}.</span><button id="takeOffer">Switch</button></div>` : ''}`;
+  if (wasEmpty) playIn(el, 'anim-in');
+  $('#endWalk').onclick = () => endWalk();
+  const tk = $('#takeOffer');
+  if (tk) tk.onclick = () => { const o = w.offer; if (!o) return; t.from = meAsPoint(); t.routes = o.routes; scoreTrip(t); t.sel = o.sel; t.userSel = true; w.offer = null;
+    renderWalkBar(); if (state.view === 'routes') renderRouteList(); drawTrip(); toast('Switched to the cooler way.'); };
+}
+async function walkTick(){
+  const w = state.walk, t = state.trip; if (!w || !t || !t.routes.length || !state.me) return;
+  const me = {lng:state.me.lng, lat:state.me.lat};
+  if (dist(me, t.to) < 25) return endWalk('You’ve arrived.');
+  const cur = t.routes[t.sel], pr = projectOnRoute(me, cur.geometry.coordinates);
+  w.remain = Math.max(0, pr.total - pr.along)*(cur.distance/(pr.total || 1)); renderWalkBar();
+  if (w.busy || (pr.off <= 35 && Date.now() - w.lastCheck < 60000)) return;
+  w.busy = true; w.lastCheck = Date.now();
+  try {
+    const rs = await osrm([me, t.to], true); if (state.walk !== w) return;
+    rs.sort((a, b) => a.duration - b.duration);
+    const cand = {from:meAsPoint(), to:t.to, routes:rs.slice(0, 3), noShade:t.noShade}; scoreTrip(cand);
+    if (pr.off > 35){   /* left the route: reroute from here automatically */
+      t.from = cand.from; t.routes = cand.routes; scoreTrip(t); t.sel = defaultSel(t); t.userSel = false; w.offer = null;
+      w.remain = t.routes[t.sel].distance; toast('Rerouted from where you are.');
+      if (state.view === 'routes') renderRouteList(); drawTrip();
+    } else if (!t.night && !t.noShade){
+      const rest = sliceRoute(cur, pr.along), curShade = rest ? routeShadeEst(rest, sunPos(nowT(), me.lat, me.lng)) : cur.shade;
+      const curDur = cur.duration*(w.remain/(cur.distance || 1)), best = cand.routes.filter(r => r.shade != null).sort((a, b) => b.shade - a.shade)[0];
+      w.offer = best && curShade != null && best.shade >= curShade + 5 && best.duration <= curDur + 120
+        ? {gain: best.shade - curShade, extra: Math.max(0, Math.round((best.duration - curDur)/60)), routes: cand.routes, sel: cand.routes.indexOf(best)} : null;
+    }
+    renderWalkBar();
+  } catch (e) {} finally { w.busy = false; }
+}
+function wpRow(which, pt){
+  const icon = which === 'from' ? (pt && pt.me ? 'me' : 'start') : 'end';
+  const ph = state.pick === which ? 'Search, or tap the map…' : (which === 'from' ? 'Choose starting point' : 'Choose destination');
+  return `<button class="wp" data-wp="${which}"><span class="wp-ico ${icon}"></span><span class="wp-txt"><span class="wp-k">${which === 'from' ? 'From' : 'To'}</span>
+    <span class="wp-v ${pt ? '' : 'ph'}">${pt ? esc(pt.name) : ph}</span></span></button>`;
+}
+function renderRoutes(){
+  const el = $('#v-routes'), t = state.trip;
+  if (!t){
+    el.innerHTML = `<div class="empty"><div class="big">${svgI('dir')}</div><h3>Plan a cooler walk</h3>
+      <p>Search for a place or tap one on the map, then choose Directions.</p>
+      <div class="actions"><button class="btn primary" id="rPick">Choose destination</button><button class="btn" id="rSample">Sample: Chandni Chowk</button></div></div>${attrHTML()}`;
+    $('#rPick').onclick = () => { state.trip = {from:meAsPoint(), to:null, routes:[], sel:0}; startPick(state.trip.from ? 'to' : 'from'); qEl.focus(); };
+    $('#rSample').onclick = loadSampleTrip; return;
+  }
+  el.innerHTML = `<div class="sec" style="padding-top:4px"><span>Trip</span>${t.sample ? '<span class="meta">Sample route</span>' : ''}</div>
+    <div class="group waypoints">${wpRow('from', t.from)}${wpRow('to', t.to)}<span class="wp-dots"></span>
+      <button class="swap" id="swapBtn" aria-label="Swap start and end" title="Swap start and end">${svgI('swap')}</button></div>
+    <div id="routeList"></div>`;
+  el.querySelectorAll('[data-wp]').forEach(b => b.onclick = () => { startPick(b.dataset.wp); qEl.focus(); });
+  $('#swapBtn').onclick = () => { if (!t.from || !t.to) return; [t.from, t.to] = [t.to, t.from]; computeTrip(); };
+  renderRouteList();
+}
+function renderRouteList(){
+  const el = $('#routeList'), t = state.trip; if (!el || !t) return;
+  if (t.loading){ el.innerHTML = `<div class="sec"><span>Routes</span><span class="meta">Finding walking routes…</span></div><div class="group"><div class="skel"></div><div class="skel"></div></div>`; return; }
+  if (t.error){
+    el.innerHTML = `<div class="insight muted" style="margin-top:12px">${svgI('loc')}<p>${esc(t.error)} <button id="retry">Try again</button></p></div>`;
+    $('#retry').onclick = () => t.sample ? loadSampleTrip() : computeTrip(); return;
+  }
+  if (!t.routes.length){ el.innerHTML = `<p class="note">${state.pick ? '' : 'Add both points to see walking routes.'}</p>`; return; }
+  if (el._shown !== t.routes){ el._shown = t.routes; playIn(el, 'anim-in'); }
+  const rows = t.routes.map((r, i) => { const sh = r.shade;
+    return `<button class="route k-${r.kind} ${i === t.sel ? 'on' : ''}" data-r="${i}" aria-pressed="${i === t.sel}">
+      <span class="key" style="background:${KIND_COLOR[r.kind]}"></span>
+      <span class="r-body"><span class="r-top"><span class="r-time num">${Math.max(1, Math.round(r.duration/60))}<small> min</small></span><span class="tag-s k-${r.kind}">${tagLabel(r)}</span></span>
+        <span class="r-meta num">${fmtDist(r.distance)} · ${sh != null ? `<b>${sh}%</b> shaded` : t.night ? 'after dark' : 'no shade data'}</span>
+        ${sh != null ? `<span class="meter"><i style="width:${sh}%;background:${KIND_COLOR[r.kind]}"></i></span>` : ''}</span>
+      <span class="tick">${svgI('check')}</span></button>`; }).join('');
+  const cool = t.routes.find(r => r.cool), fast = t.routes.find(r => r.fast);
+  let insight = '';
+  if (t.night){
+    const o = t.to || t.from, jump = new Date(nextRise(nowT(), o)); jump.setHours(9, 0, 0, 0);
+    insight = `<div class="insight muted">${svgI('moon')}<p>The sun is down, so these are normal walking routes. <button data-jump="${jump.getTime()}">See ${fmtDay(jump)} 9 AM</button></p></div>`;
+  } else if (t.noShade){
+    const n = nearestArea(t.to || t.from);
+    insight = `<div class="insight muted">${svgI('leaf')}<p>Shade data isn’t built for this area yet, so these are plain walking routes. Nearest shade area: <b>${esc(n.a.name)}</b>, ${fmtDist(n.d)} away.</p></div>`;
+  } else if (cool && fast && cool !== fast){
+    const dd = Math.round(cool.distance - fast.distance), dm = Math.round((cool.duration - fast.duration)/60);
+    insight = `<div class="insight">${svgI('leaf')}<p><b>${cool.shade - fast.shade} points more shade</b> for ${dd > 15 ? fmtDist(dd) + ' more walking' : 'about the same distance'}${dm > 0 ? ` (+${dm} min)` : ''}.</p></div>`;
+  } else if (cool){
+    insight = `<div class="insight">${svgI('leaf')}<p>At this time the fastest route is also the shadiest, at <b>${cool.shade}%</b>.</p></div>`;
+  } else if (fast && fast.shade != null){
+    insight = `<div class="insight">${svgI('leaf')}<p>About <b>${fast.shade}%</b> of this route is in shade at this time.</p></div>`;
+  }
+  const adv = adviceText();
+  const walkBtn = t.from && t.from.me && !state.walk ? `<button class="btn primary" id="walkBtn" style="margin-top:10px;width:100%">${svgI('walk')} Start walking</button>` : '';
+  el.innerHTML = `<div class="sec"><span>Routes</span><span class="meta num">${state.when ? 'Leaving ' + fmtWhen(nowT()) : 'Leaving now'}</span></div><div class="group">${rows}</div>${insight}
+    ${adv ? `<div class="advice">${svgI('sun')}<span>${esc(adv)}</span></div>` : ''}${walkBtn}
+    <div class="actions"><button class="btn accent" id="shadeBtn">${state.shade ? 'Hide' : 'Show'} shade layer</button><button class="btn danger" id="clearBtn">Clear route</button></div>${attrHTML()}`;
+  el.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { t.sel = +b.dataset.r; t.userSel = true; renderRouteList(); drawTrip(); renderWalkBar(); });
+  $('#shadeBtn').onclick = toggleShade;
+  $('#clearBtn').onclick = () => { if (state.walk) endWalk(); state.trip = null; cancelPick(); drawTrip(); renderRoutes(); };
+  const wb = $('#walkBtn'); if (wb) wb.onclick = startWalk;
+}
+
+/* ============================================================
+   Planner (sample rows from your priority.py output, Lajpat Nagar)
+   ============================================================ */
+const PL = [['Feroze Gandhi Road',100,'564',26],['Mahatma Gandhi Marg',100,'248',1],['Unnamed path',99,'1,235',0],['Shiv Mandir Marg',99,'630',22],
+  ['Veer Savarkar Marg',98,'611',25],['Unnamed path',98,'986',22],['Shaheed Mohan Dutta Marg',97,'753',30],['Vaishno Devi Marg',97,'422',30]];
+let plannerData = null, plannerKey = '', plannerSeq = 0, plannerT = null;
+const loadPlannerSoon = () => { clearTimeout(plannerT); plannerT = setTimeout(loadPlanner, 350); };
+async function loadPlanner(){
+  if (!REGION || !mapReady) return;
+  if (map.getZoom() < 13.5){ plannerData = {zoomIn:true}; plannerKey = ''; return renderPlanner(); }
+  const b = map.getBounds(), cx = (b.getWest() + b.getEast())/2, cy = (b.getSouth() + b.getNorth())/2;
+  const hw = Math.min(0.024, (b.getEast() - b.getWest())/2), hh = Math.min(0.024, (b.getNorth() - b.getSouth())/2);
+  const d = new Date(nowT()); d.setSeconds(0, 0); d.setMinutes(Math.round(d.getMinutes()/15)*15);
+  const dark = sunPos(d, cy, cx).alt < 8;                 /* sun down or about to set: every street is shaded, so use 2 PM */
+  if (dark) d.setHours(14, 0, 0, 0);
+  const key = [cx.toFixed(3), cy.toFixed(3), hw.toFixed(3), d.getTime()].join();
+  if (key === plannerKey && plannerData && !plannerData.zoomIn) return;
+  plannerKey = key; const seq = ++plannerSeq;
+  if (!plannerData || plannerData.zoomIn){ plannerData = {loading:true}; renderPlanner(); }
+  try {
+    const r = await fetch(`${API}/api/region/planner?west=${cx - hw}&south=${cy - hh}&east=${cx + hw}&north=${cy + hh}&when=${encodeURIComponent(whenISO(d))}`);
+    const j = await r.json(); if (seq !== plannerSeq) return;
+    plannerData = r.ok ? Object.assign(j, {at: d.getTime(), dark, area: key.split(',').slice(0, 3).join()}) : {error: j.detail || 'Couldn’t load the planner.'};
+  } catch (e){ if (seq === plannerSeq) plannerData = {error:'Couldn’t reach the shade server.'}; }
+  if (seq === plannerSeq && state.view === 'planner') renderPlanner();
+}
+function plannerHighlight(row){
+  if (!mapReady || !map.getSource('planner-hi')) return;
+  if (plHiStop){ plHiStop(); plHiStop = null; }
+  const src = map.getSource('planner-hi');
+  if (!row) return src.setData(EMPTY);
+  const fc = {type:'FeatureCollection', features: row.lines.map(c => ({type:'Feature', properties:{}, geometry:{type:'LineString', coordinates:c}}))};
+  plHiStop = tween(950, k => src.setData(drawOn(fc, k)), () => { plHiStop = null; });
+  const pts = row.lines.flat(), xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  map.fitBounds([[Math.min(...xs), Math.min(...ys)], [Math.max(...xs), Math.max(...ys)]], {padding:camPad(), maxZoom:17, duration:900});
+}
+function renderPlannerLive(el){
+  const d = plannerData || {loading:true}, km = n => n.toLocaleString('en-IN');
+  if (d.zoomIn){ el.innerHTML = `<p class="note" style="padding:6px 2px">Zoom in to a neighbourhood and the planner ranks its streets for new trees.</p>${attrHTML()}`; return; }
+  if (d.loading){ el.innerHTML = `<div class="sec" style="padding-top:4px"><span>Finding the streets that need shade most…</span></div>
+    <div class="stats"><div class="skel stat-skel"></div><div class="skel stat-skel"></div></div>
+    <div class="sec"><span>Plant here first</span></div><div class="group">${'<div class="skel sm"></div>'.repeat(6)}</div>`; return; }
+  if (d.error){ el.innerHTML = `<p class="note" style="padding:6px 2px">${esc(d.error)}</p>`; return; }
+  const at = new Date(d.at), fresh = motionOK() && el._area !== d.area;
+  el._area = d.area;
+  el.innerHTML = `${d.dark ? `<div class="when-note" style="margin:0 0 8px">${svgI('sun')}<span>The sun is too low at your chosen time, so the planner shows ${fmtDay(at)} at 2:00 PM.</span></div>` : ''}
+    <div class="sec" style="padding-top:4px"><span>This area at ${fmtTime(at)}</span><span class="meta">${esc(fmtDay(at))}</span></div>
+    <div class="stats"><div class="stat">${countHTML('pl-avg', d.avg_shade_pct, '%')}<span>average street shade (${km(d.km)} km of walking streets)</span></div>
+      <div class="stat">${countHTML('pl-sunny', d.sunny_pct, '%')}<span>of streets here have under 20% shade</span></div></div>
+    <div class="sec"><span>Plant here first</span><span class="meta">Priority</span></div>
+    ${d.rows.length ? `<div class="group pl-rows${fresh ? ' fresh' : ''}">${d.rows.map((p, k) => `<button class="item" data-pl="${k}" style="--k:${k}"><span class="rank num">${k + 1}</span><span class="tx"><span class="t">${p.code ? `${esc(p.name.slice(0, -p.code.length - 1))} <span class="pcode" title="ID for a path with no name. It is a Plus Code: paste it into Google Maps to find the spot.">${esc(p.code)}</span>` : esc(p.name)}</span>
+      <span class="s num">${km(p.length_m)} m · ${p.shade_pct}% shade${p.trees ? ` → ${p.shade_after_pct}% with ${p.trees} trees` : ''}</span>
+      <span class="pbar" aria-hidden="true"><i style="width:${Math.max(3, p.score)}%"></i></span></span><span class="p-score num">${p.score}<small>score</small></span></button>`).join('')}</div>`
+      : `<p class="note">No walking streets in view.</p>`}
+    <p class="note">Ranks the streets on screen by how much of them is in the sun at the chosen time, weighted by how busy that kind of street usually is. Tap one to see it. Move the map to plan another area.</p>${attrHTML()}`;
+  countUp(el);
+  if (fresh){ const g = el.querySelector('.pl-rows'); setTimeout(() => g && g.classList.remove('fresh'), 1400); }
+  el.querySelectorAll('[data-pl]').forEach(b => b.onclick = () => { el.querySelectorAll('[data-pl]').forEach(x => x.classList.toggle('on', x === b)); plannerHighlight(d.rows[+b.dataset.pl]); });
+}
+function renderPlanner(){
+  const el = $('#v-planner');
+  if (REGION) return renderPlannerLive(el);
+  el.innerHTML = `<div class="sec" style="padding-top:4px"><span>Overview</span><span class="meta">Lajpat Nagar sample</span></div>
+    <div class="stats"><div class="stat"><b class="num">20,000</b><span>walking trips simulated</span></div>
+      <div class="stat"><b class="num">45%</b><span>of busy streets under 20% shade at 2&nbsp;PM</span></div></div>
+    <div class="sec"><span>Plant here first</span><span class="meta">Priority</span></div>
+    <div class="group">${PL.map((p, k) => `<div class="item"><span class="rank num">${k + 1}</span><span class="tx"><span class="t">${esc(p[0])}</span>
+      <span class="s num">${p[2]} trips/day · ${p[3]}% shade at 2 PM</span></span><span class="p-score num">${p[1]}<small>score</small></span></div>`).join('')}</div>
+    <p class="note">Priority combines how many people walk a street with how little shade it gets in the afternoon.</p>${attrHTML()}`;
+}
+
+/* ---------- sample shade colours: every street inside a shade area, cut at the circle edge ---------- */
+const SHADE_CLASSES = ['path','minor','service','track','tertiary','secondary','primary','trunk'];
+const SHADE_BY_CLASS = {path:0.7, service:0.62, track:0.62, minor:0.55, tertiary:0.4, secondary:0.3};
+const shadeSegs = new Map(), segGrid = new Map();
+function gridAdd(feat){
+  const c = feat.geometry.coordinates, seen = new Set(), add = p => { const k = Math.floor(p[0]*500) + ',' + Math.floor(p[1]*500);
+    if (seen.has(k)) return; seen.add(k); if (!segGrid.has(k)) segGrid.set(k, []); segGrid.get(k).push(feat); };
+  for (let i = 1; i < c.length; i++){ const n = Math.max(1, Math.ceil(dist({lng:c[i-1][0], lat:c[i-1][1]}, {lng:c[i][0], lat:c[i][1]})/80));
+    for (let k = 0; k <= n; k++) add([c[i-1][0] + (c[i][0] - c[i-1][0])*k/n, c[i-1][1] + (c[i][1] - c[i-1][1])*k/n]); }
+}
+function straightPieces(run){
+  const out = []; let cur = [run[0]], b0 = null;
+  for (let i = 1; i < run.length; i++){
+    const b = bearingAx(run[i-1], run[i]);
+    if (b0 !== null && axDiff(b, b0) > 0.35){ out.push(cur); cur = [run[i-1]]; b0 = null; }
+    cur.push(run[i]); if (b0 === null) b0 = b;
+  }
+  out.push(cur); return out.filter(p => p.length > 1);
+}
+function hash01(str){ let h = 2166136261; for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967295; }
+function clipToCircle(coords, a){
+  const k = 111320*Math.cos(rad(a.lat)), xy = c => [(c[0] - a.lng)*k, (c[1] - a.lat)*110540], ll = p => [a.lng + p[0]/k, a.lat + p[1]/110540];
+  const r2 = a.r*a.r, runs = []; let run = null;
+  for (let i = 1; i < coords.length; i++){
+    const p = xy(coords[i-1]), q = xy(coords[i]), pin = p[0]**2 + p[1]**2 <= r2, qin = q[0]**2 + q[1]**2 <= r2;
+    if (pin && qin){ if (!run){ run = [coords[i-1]]; runs.push(run); } run.push(coords[i]); continue; }
+    const dx = q[0] - p[0], dy = q[1] - p[1], A = dx*dx + dy*dy, B = 2*(p[0]*dx + p[1]*dy), C = p[0]**2 + p[1]**2 - r2, D = B*B - 4*A*C;
+    if (!A || D < 0){ run = null; continue; }
+    const sq = Math.sqrt(D), t1 = (-B - sq)/(2*A), t2 = (-B + sq)/(2*A), at = t => ll([p[0] + dx*t, p[1] + dy*t]);
+    if (pin){ if (!run){ run = [coords[i-1]]; runs.push(run); } run.push(at(clamp(t2, 0, 1))); run = null; }
+    else if (qin){ run = [at(clamp(t1, 0, 1)), coords[i]]; runs.push(run); }
+    else { if (t1 > 0 && t2 < 1) runs.push([at(t1), at(t2)]); run = null; }
+  }
+  return runs;
+}
+let regionBox = null, regionKey = '', regionSeq = 0;
+async function loadRegionShade(){
+  const on = (state.shade || state.view === 'planner') && !isNight();
+  if (!mapReady || !on || map.getZoom() < 14.3) return;
+  const b = map.getBounds(), key = whenISO(new Date(Math.round(nowT().getTime()/9e5)*9e5));   /* refresh every 15 min of shown time */
+  const inside = regionBox && b.getWest() >= regionBox[0] && b.getSouth() >= regionBox[1] && b.getEast() <= regionBox[2] && b.getNorth() <= regionBox[3];
+  if (inside && key === regionKey) return;
+  const cx = (b.getWest() + b.getEast())/2, cy = (b.getSouth() + b.getNorth())/2;
+  const hw = Math.min(0.016, (b.getEast() - b.getWest())*0.65), hh = Math.min(0.016, (b.getNorth() - b.getSouth())*0.65);
+  const box = [cx - hw, cy - hh, cx + hw, cy + hh], seq = ++regionSeq;
+  try {
+    const r = await fetch(`${API}/api/region/shade?west=${box[0]}&south=${box[1]}&east=${box[2]}&north=${box[3]}&when=${encodeURIComponent(key)}`);
+    if (!r.ok || seq !== regionSeq) return;
+    const fc = await r.json(); if (seq !== regionSeq) return;
+    regionBox = box; regionKey = key; segGrid.clear();
+    for (const f of fc.features){ const c = f.geometry.coordinates; f.properties.brg = bearingAx(c[0], c[c.length - 1]); gridAdd(f); }
+    map.getSource('shade').setData(fc);
+    const t = state.trip;
+    if (t && t.routes && t.routes.length && t.routes.some(x => x.serverShade == null)){ scoreTrip(t); if (state.view === 'routes') renderRouteList(); }
+  } catch (e) {}
+}
+function harvestShade(){
+  if (REGION) return loadRegionShade();
+  if (!mapReady || map.getZoom() < 12.5) return;
+  const vb = map.getBounds();
+  const near = AREAS.filter(a => { const dLng = a.r/(111320*Math.cos(rad(a.lat))), dLat = a.r/110540;
+    return a.lng + dLng >= vb.getWest() && a.lng - dLng <= vb.getEast() && a.lat + dLat >= vb.getSouth() && a.lat - dLat <= vb.getNorth(); });
+  if (!near.length) return;
+  let feats = []; try { feats = map.querySourceFeatures('omt', {sourceLayer:'transportation', filter:cls(...SHADE_CLASSES)}); } catch (e) { return; }
+  let added = 0;
+  for (const f of feats){
+    const g = f.geometry; if (!g) continue;
+    const parts = g.type === 'LineString' ? [g.coordinates] : g.type === 'MultiLineString' ? g.coordinates : null; if (!parts) continue;
+    const b = SHADE_BY_CLASS[f.properties.class] ?? 0.18;
+    for (const a of near) for (const part of parts) for (const run of clipToCircle(part, a)) for (const pc of straightPieces(run)){
+      const s0 = pc[0], s1 = pc[pc.length - 1];
+      const key = `${s0[0].toFixed(5)},${s0[1].toFixed(5)}|${s1[0].toFixed(5)},${s1[1].toFixed(5)}`;
+      if (shadeSegs.has(key)) continue;
+      const feat = {type:'Feature', properties:{b, j:0.24*(hash01(String(f.id ?? key)) - 0.5), brg:bearingAx(s0, s1)}, geometry:{type:'LineString', coordinates:pc}};
+      shadeSegs.set(key, feat); gridAdd(feat); added++;
+    }
+  }
+  if (added){
+    map.getSource('shade').setData({type:'FeatureCollection', features:[...shadeSegs.values()]});
+    const t = state.trip;   /* more street data → better route shade estimates */
+    if (t && t.routes && t.routes.length){ scoreTrip(t); if (!t.userSel) t.sel = defaultSel(t); if (state.view === 'routes'){ renderRouteList(); drawTrip(); } renderWalkBar(); }
+  }
+}
+
+/* ---------- shade layer + map buttons ---------- */
+function toggleShade(){ state.shade = !state.shade; applyShadeVisibility(); if (state.view === 'routes') renderRouteList(); }
+function applyShadeVisibility(){
+  const on = (state.shade || state.view === 'planner') && !isNight();
+  if (mapReady){ fadeLayer('shade-sample', on); if (on) harvestShade(); }
+  $('#legend').classList.toggle('show', on); $('#layerBtn').setAttribute('aria-pressed', on);
+  $('#legendTime').textContent = state.view === 'planner' && !REGION ? '2:00 PM' : fmtTime(nowT());
+}
+$('#layerBtn').onclick = () => {
+  if (state.view === 'planner') return toast('The shade layer stays on in Planner.');
+  if (isNight()) return toast(`The sun is down. Shade colours come back at sunrise (${fmtTime(nextRise(nowT(), origin()))}).`);
+  toggleShade(); if (state.shade && !areaAt(origin())) toast('Shade colours appear inside the green dashed shade-data areas.');
+};
+$('#zin').onclick = () => map && map.zoomIn();
+$('#zout').onclick = () => map && map.zoomOut();
+$('#compass').onclick = () => map && map.resetNorth();
+$('#dirBtn').onclick = () => {
+  if (state.place) return directionsTo(state.place);
+  if (!state.trip) state.trip = {from:meAsPoint(), to:null, routes:[], sel:0};
+  setView('routes', {sheet:'half'}); if (!state.trip.to || !state.trip.from) { startPick(state.trip.from ? 'to' : 'from'); qEl.focus(); }
+};
+
+/* ============================================================
+   Bottom sheet (phone)
+   ============================================================ */
+const panel = $('#panel'), handle = $('#handle');
+const sheetSizes = () => ({peek:196, half:Math.round(innerHeight*0.46), full:Math.round(innerHeight - 150)});
+const sheetPx = () => isPhone() ? sheetSizes()[state.sheet] : 0;
+function setSheet(s){ state.sheet = s; root.style.setProperty('--sheet-h', sheetSizes()[s] + 'px'); document.body.classList.toggle('sheet-full', s === 'full'); }
+let sDrag = null;
+handle.addEventListener('pointerdown', e => { if (!isPhone()) return; sDrag = {y:e.clientY, h:panel.getBoundingClientRect().height, moved:false, ly:e.clientY, lt:performance.now(), v:0};
+  panel.classList.add('dragging'); handle.setPointerCapture(e.pointerId); });
+handle.addEventListener('pointermove', e => { if (!sDrag) return; const dy = sDrag.y - e.clientY, now = performance.now(); if (Math.abs(dy) > 4) sDrag.moved = true;
+  sDrag.v = 0.7*sDrag.v + 0.3*((sDrag.ly - e.clientY)/Math.max(1, now - sDrag.lt)); sDrag.ly = e.clientY; sDrag.lt = now;
+  const S = sheetSizes(); let h = sDrag.h + dy;
+  if (h > S.full) h = S.full + (h - S.full)*0.3; if (h < S.peek) h = S.peek - (S.peek - h)*0.3;   /* rubber band at the ends */
+  root.style.setProperty('--sheet-h', h + 'px'); });
+const endSheetDrag = () => { if (!sDrag) return; panel.classList.remove('dragging');
+  const h = panel.getBoundingClientRect().height, S = sheetSizes(), order = ['peek','half','full'];
+  if (!sDrag.moved) setSheet(state.sheet === 'peek' ? 'half' : 'peek');
+  else if (Math.abs(sDrag.v) > 0.4) setSheet(sDrag.v > 0 ? (order.find(k => S[k] > h + 8) || 'full') : ([...order].reverse().find(k => S[k] < h - 8) || 'peek'));   /* flick */
+  else setSheet(Object.entries(S).sort((a, b) => Math.abs(a[1] - h) - Math.abs(b[1] - h))[0][0]);
+  sDrag = null; };
+handle.addEventListener('pointerup', endSheetDrag); handle.addEventListener('pointercancel', endSheetDrag);
+handle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setSheet(state.sheet === 'peek' ? 'half' : state.sheet === 'half' ? 'full' : 'peek'); } });
+addEventListener('resize', () => setSheet(state.sheet));
+
+/* ============================================================
+   Toast + chat (sample replies only)
+   ============================================================ */
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function playIn(el, cls){ if (!el || reduceMotion()) return; el.classList.remove('anim-in', 'anim-push', 'anim-pop'); void el.offsetWidth; el.classList.add(cls);
+  clearTimeout(el._animT); el._animT = setTimeout(() => el.classList.remove(cls), 800); }
+function closeAnimated(el, done){ if (reduceMotion()){ el.hidden = true; return done && done(); }
+  el.classList.add('closing'); setTimeout(() => { el.hidden = true; el.classList.remove('closing'); if (done) done(); }, 170); }
+function moveIndicators(){ const i = ['explore','routes','planner'].indexOf(state.tab); $('.seg').style.setProperty('--i', i); $('#tabbar').style.setProperty('--i', i); }
+function fadeLayer(id, on){ const F = {'shade-sample':['line-opacity', shadeOp()], 'area-fill':['fill-opacity', 1], 'area-line':['line-opacity', 0.75], 'area-label':['text-opacity', 1]}[id];
+  if (!mapReady || !map.getLayer(id) || !F) return; map.setLayoutProperty(id, 'visibility', 'visible'); map.setPaintProperty(id, F[0], on ? F[1] : 0); }
+let seg2Prev = 0;
+let toastT = null;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3800); }
+const chat = $('#chat'), msgs = $('#msgs'), input = $('#msgIn'), send = $('#sendBtn');
+function openChat(){ chat.hidden = false; setTimeout(() => input.focus(), 50); }
+function closeChat(){ if (!chat.hidden && !chat.classList.contains('closing')) closeAnimated(chat); }
+$('#closeChat').onclick = closeChat;
+input.addEventListener('input', () => { send.disabled = !input.value.trim(); });
+const REPLIES = [
+  [/shadiest|cool|best time|when/i, () => { const o = origin(), d = nowT(), at = x => Math.round(areaShadePct(sunPos(x, o.lat, o.lng).alt) ?? 0);
+    const noon = new Date(d); noon.setHours(12, 0, 0, 0); const late = new Date(sunTimes(d, o.lat, o.lng).set.getTime() - 3600e3);
+    return `Shade is lowest around midday (about ${at(noon)}% of street length at noon) and grows as the sun drops: about ${at(late)}% an hour before sunset, at ${fmtTime(late)}. (Sample numbers.)`; }],
+  [/park|garden|green/i, () => { const p = nearby.filter(x => x.cat === 'park').slice(0, 3); return p.length ? `Closest parks on the map: ${p.map(x => `${x.name} (${fmtDist(x.d)})`).join(', ')}.` : 'I can’t see any named parks on this part of the map. Try zooming out.'; }],
+  [/why|cooler|shad/i, () => { if (isNight()) return 'The sun is down right now, so every route is equally shaded.';
+    const s = sunNow(), t = state.trip, c = t && t.routes && t.routes.find(r => r.cool), f = t && t.routes && t.routes.find(r => r.fast);
+    const base = `The sun is ${Math.round(s.alt)}° high in the ${compass(s.az)}. Streets that run across the sun's direction get the most shade from buildings`;
+    return c && f && c !== f ? `${base}, and the cooler route uses more of them: ${c.shade}% vs ${f.shade}% on the fastest route.` : base + '.'; }],
+];
+function scrollMsgs(){ msgs.scrollTo({top: msgs.scrollHeight, behavior: motionOK() ? 'smooth' : 'auto'}); }
+function bubble(text, cls){ const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text; msgs.appendChild(d); scrollMsgs(); }
+const chatHistory = [];
+async function askLive(text, t){
+  try {
+    const o = origin(), ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 55000);
+    const r = await fetch(`${API}/api/region/chat`, {method:'POST', headers:{'Content-Type':'application/json'}, signal:ctl.signal,
+      body: JSON.stringify({message:text, history:chatHistory.slice(-8), lat:o.lat, lon:o.lng, when: state.when ? whenISO(nowT()) : null})});
+    clearTimeout(tm);
+    const j = await r.json(); t.remove();
+    const answer = j.answer || j.detail || 'Sorry, something went wrong.';
+    bubble(answer, 'in');
+    chatHistory.push({role:'user', text}, {role:'assistant', text:answer});
+    for (const a of (j.actions || [])) chatAction(a);
+  } catch (e){ t.remove(); bubble('I couldn’t reach the assistant. Check your connection and try again.', 'in'); }
+}
+function chatAction(a){
+  if (a.type === 'route'){
+    const me = state.me && dist(state.me, a.from) < 60 ? meAsPoint() : {name:a.from.name, lng:a.from.lng, lat:a.from.lat};
+    if (a.when) setWhen(new Date(a.when));
+    state.trip = {from:me, to:{name:a.to.name, lng:a.to.lng, lat:a.to.lat}, routes:[], sel:0};
+    setView('routes', {sheet: isPhone() ? 'half' : null}); computeTrip();
+  } else if (a.type === 'planner' && mapReady){
+    map.flyTo({center:[a.lng, a.lat], zoom:15, padding:camPad(), duration:1200});
+    setView('planner');
+  }
+}
+function ask(text){
+  bubble(text, 'out'); input.value = ''; send.disabled = true;
+  if (REGION){ const t = document.createElement('div'); t.className = 'msg in typing'; t.innerHTML = '<i></i><i></i><i></i>'; msgs.appendChild(t); scrollMsgs(); return askLive(text, t); }
+  const t = document.createElement('div'); t.className = 'msg in typing'; t.innerHTML = '<i></i><i></i><i></i>'; msgs.appendChild(t); scrollMsgs();
+  setTimeout(() => { t.remove(); const m = REPLIES.find(([re]) => re.test(text)); bubble(m ? m[1]() : 'In the live app I’ll answer from your shade data. This preview only has a few sample replies.', 'in'); }, 650);
+}
+$('#composer').addEventListener('submit', e => { e.preventDefault(); if (input.value.trim()) ask(input.value.trim()); });
+$$('.qchips button').forEach(b => b.onclick = () => ask(b.textContent));
+
+/* ============================================================
+   Start
+   ============================================================ */
+setTheme(state.theme);
+renderChips(); setSheet('peek');
+moveIndicators(); renderWhen(); renderExplore();
+initRegion().finally(startMap);
+/* live clock: every minute, shade colours, sun marker, routes and the When bar follow the real time */
+let liveNight = null;
+setInterval(() => {
+  if (!state.when){
+    const o = origin(), n = sunPos(new Date(), o.lat, o.lng).alt < -0.833;
+    if (liveNight !== null && n !== liveNight) toast(n ? 'The sun has set, so the map is back to normal.' : 'The sun is up. Shade colours are back.');
+    liveNight = n; timeChanged(false); maybeWeather();
+  }
+  if (state.walk) walkTick();
+}, 60000);
+window.ShadeRoutes = { get map(){ return map; }, state, setWhen, sunPos, sunTimes,
+  setAreas(a){ AREAS = a; if (mapReady){ map.getSource('areas').setData(areasFC()); map.getSource('area-pts').setData(areaPtsFC()); shadeSegs.clear(); segGrid.clear(); map.getSource('shade').setData(EMPTY); harvestShade(); } renderExplore(); } };
+})();
+</script>
+</body>
+</html>

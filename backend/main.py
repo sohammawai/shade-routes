@@ -13,6 +13,16 @@ import engine
 
 app = FastAPI(title="Shade Routes API", version="1.0",
               description="Where to plant trees, and the shadiest way to walk.")
+from region_api import router as region_router
+app.include_router(region_router)
+
+# The website on Amplify calls this API from another address, so the browser needs CORS.
+# GZip keeps the street-shade answers well under AWS Lambda's 6 MB response limit.
+# (If you switched on CORS in the Lambda Function URL settings, turn it off there: two sets of CORS headers break it.)
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
 def area_or_404(key):

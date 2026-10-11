@@ -8,3 +8,17 @@ frontend/node_modules/
 frontend/dist/
 backend/build/
 backend/*.zip
+cd ..
+Add-Content .gitignore "`nvenv/"
+.env
+data/
+cache/
+backend/build/
+frontend/dist/
+node_modules/
+.venv/
+__pycache__/
+*.zip
+*.db
+*.mbtiles
+*.npz

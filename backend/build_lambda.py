@@ -17,7 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(HERE, "build")
 ZIP_PATH = os.path.join(HERE, "shade-routes-api.zip")
 PYTHON_VERSION = "3.12"                     # must match the Lambda runtime you choose
-APP_FILES = ["main.py", "engine.py", "chat.py"]
+APP_FILES = ["main.py", "engine.py", "chat.py", "region_engine.py", "region_api.py", "region_chat.py"]   # region data comes from S3 (REGION_DB_S3)
 
 
 def main():
